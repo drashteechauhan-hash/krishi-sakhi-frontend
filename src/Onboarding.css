@@ -1,0 +1,148 @@
+.onboarding-container {
+  font-family: "Poppins", sans-serif;
+  color: #333;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #001f54; /* navy blue */
+  background: rgba(194, 245, 147, 0.4);
+}
+
+.overlay h1 {
+  font-size: 2.5rem;
+}
+
+.overlay span {
+  color: #4caf50;
+}
+
+.scroll-indicator {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
+/* Form Section */
+.form-section {
+  padding: 50px 20px;
+  background: #f9f9f9;
+}
+
+.form-section h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #2e7d32;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin: auto;
+}
+
+.profile-form label {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.profile-form input {
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.profile-form button {
+  background: linear-gradient(135deg, #76c893, #4caf50);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-form button:hover {
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+}
+
+
+.form-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* optional dim */
+  z-index: 1;
+}
+
+.form-section h2,
+.profile-form {
+  position: relative;
+  z-index: 2;
+}
+
+.form-overlay {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.8); /* bright and optimistic */
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 450px;
+  margin: auto;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.profile-form button {
+  margin-top: 20px;
+  padding: 12px;
+  background: #4caf50; /* cheerful green */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-form button:hover {
+  background: #66bb6a; /* lighter green on hover */
+}
+.profile-form input {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

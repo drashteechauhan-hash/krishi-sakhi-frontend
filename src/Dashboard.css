@@ -1,0 +1,135 @@
+/* Dashboard Wrapper */
+.dashboard-container {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 2rem;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f0fff4, #e6f7ff);
+  min-height: 100vh;
+  border-radius: 20px;
+}
+
+/* Heading */
+h2 {
+  text-align: center;
+  color: #2e7d32;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Generic Card Style */
+.card,
+.weather-card,
+.pest-alert,
+.market-trends,
+.profile-summary {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.8rem;
+  margin: 1.5rem auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.card:hover,
+.weather-card:hover,
+.profile-summary:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Weather Card */
+.weather-card {
+  max-width: 380px;
+  text-align: center;
+  background: linear-gradient(145deg, #e0f7fa, #f1f8e9);
+  border: none;
+}
+
+.weather-card h3 {
+  color: #0077b6;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.weather-card p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+/* Profile Section */
+.profile-card-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 0;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.profile-summary {
+  width: 320px;
+  background: linear-gradient(145deg, #ffffff, #f4f9f4);
+  border-left: 6px solid #2e7d32;
+  font-size: 0.95rem;
+}
+
+.profile-summary h4 {
+  color: #2e7d32;
+  font-weight: 700;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+/* Floating Farmer Images */
+.floating-img {
+  width: 280px;
+  height: 420px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease;
+}
+
+.floating-img:hover {
+  transform: scale(1.05);
+}
+
+/* Buttons */
+button {
+  display: inline-block;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, #43a047, #2e7d32);
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #2e7d32, #1b5e20);
+  transform: translateY(-2px);
+}
+
+/* Animations */
+.slide-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
