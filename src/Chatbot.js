@@ -1,165 +1,157 @@
-import React, { useState, useEffect, useRef } from "react";
-import faqData from "./faq.json";
+import React, { useState } from "react";
+import { useRef, useEffect } from "react";
 
 const Chatbot = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    { type: "bot", text: "Hello 👋\n\nനമസ്കാരം! എങ്ങനെ സഹായിക്കാം?" }
+  ]);
   const [input, setInput] = useState("");
-  const messagesEndRef = useRef(null);
+ //
+  const bottomRef = useRef(null);
 
-  // Auto-scroll chat
+  // 👇 ADD HERE
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Normalize text (remove punctuation, trim spaces, lowercase)
-  const normalize = (str) =>
-    (str || "").toLowerCase().replace(/[?.!,]/g, "").trim();
+  const sendMessageToAI = async (message) => {
+    try {
+      const res = await fetch("http://localhost:8080/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
 
-  // Detect language (English if has A-Z, else Malayalam)
-  const detectLang = (text) => {
-    return /[a-zA-Z]/.test(text) ? "en" : "ml";
-  };
-
-  // Send message
-  const handleSend = (text) => {
-    if (!text || !text.trim()) return;
-    const userText = text.trim();
-
-    // Show user msg
-    setMessages((prev) => [...prev, { sender: "user", text: userText }]);
-    setInput("");
-
-    // Normalize user text
-    const lowerText = normalize(userText);
-
-    // Match FAQ (exact match after normalization)
-    const match = faqData.find((q) => {
-      const qEn = normalize(q.question_en);
-      const qMl = normalize(q.question_ml);
-      return qEn === lowerText || qMl === lowerText;
-    });
-
-    const userLang = detectLang(userText);
-    let answer;
-    if (match) {
-      answer =
-        userLang === "en"
-          ? match.answer_en || "Sorry, answer not available."
-          : match.answer_ml || "ക്ഷമിക്കുക, മറുപടി ലഭ്യമല്ല.";
-    } else {
-      answer =
-        userLang === "en"
-          ? "Sorry, we will reply shortly."
-          : "ക്ഷമിക്കുക, ഉടൻ മറുപടി നൽകും";
+      const data = await res.json();
+      return data.reply;
+    } catch (err) {
+      console.error(err);
+      return "Error connecting to AI";
     }
-
-    setMessages((prev) => [...prev, { sender: "bot", text: answer }]);
   };
+  const speakText = (text) => {
+  const parts = text.split("\n\n");
 
+  const english = parts[0] || "";
+  const malayalam = parts[1] || "";
+
+  // English speech
+  const engSpeech = new SpeechSynthesisUtterance(english);
+  engSpeech.lang = "en-US";
+
+  // Malayalam speech (force English voice)
+  const malSpeech = new SpeechSynthesisUtterance(malayalam);
+  malSpeech.lang = "en-US"; // 👈 IMPORTANT (this is what you want)
+
+  speechSynthesis.cancel();
+
+  speechSynthesis.speak(engSpeech);
+
+  engSpeech.onend = () => {
+    speechSynthesis.speak(malSpeech);
+  };
+};
+ const handleSend = async () => {
+  if (!input.trim()) return;
+
+  const userMessage = input;
+
+  // show user + typing
+  setMessages((prev) => [
+    ...prev,
+    { type: "user", text: userMessage },
+    { type: "bot", text: "⏳ Typing..." }
+  ]);
+
+  setInput("");
+
+  // wait for UI update
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  // ✅ FIRST get reply
+  const reply = await sendMessageToAI(userMessage);
+const cleanReply = reply.replace(/---/g, "\n\n");
+speakText(cleanReply);
+  // ✅ THEN speak
+  speakText(reply);
+
+  // replace typing
+  setMessages((prev) => {
+    const updated = [...prev];
+    updated[updated.length - 1] = {
+      type: "bot",
+      text: reply,
+    };
+    return updated;
+  });
+};
   return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: "20px",
-        right: "20px",
-        width: "300px",
-        height: "400px",
-        background: "#fff",
-        border: "2px solid #2e7d32",
-        borderRadius: "12px",
-        boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
-        display: "flex",
-        flexDirection: "column",
-        zIndex: 9999,
-      }}
-    >
-      {/* Close button */}
-      <button
-        onClick={() => setMessages([])}
-        style={{
-          position: "absolute",
-          top: "5px",
-          right: "5px",
-          background: "#d9534f",
-          color: "#fff",
-          border: "none",
-          borderRadius: "50%",
-          width: "24px",
-          height: "24px",
-          cursor: "pointer",
-          fontWeight: "bold",
-        }}
-      >
-        ×
-      </button>
-
-      {/* Messages */}
-      <div style={{ flex: 1, padding: "10px", overflowY: "auto" }}>
-        {messages.length === 0 && (
-          <div style={{ color: "#aaa", textAlign: "center", marginTop: "40%" }}>
-            You can ask a question in English or Malayalam
-          </div>
-        )}
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            style={{
-              margin: "5px 0",
-              textAlign: msg.sender === "user" ? "right" : "left",
-            }}
-          >
-            <span
-              style={{
-                display: "inline-block",
-                padding: "8px",
-                borderRadius: "10px",
-                background: msg.sender === "user" ? "#4caf50" : "#eee",
-                color: msg.sender === "user" ? "#fff" : "#000",
-                maxWidth: "80%",
-              }}
-            >
-              {msg.text}
-            </span>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+    <div style={{
+      width: "350px",
+      height: "100%",
+      background: "white",
+      borderRadius: "15px",
+      border: "2px solid green",
+      display: "flex",
+      flexDirection: "column"
+    }}>
+      
+      {/* HEADER */}
+      <div style={{ padding: "10px", fontWeight: "bold" }}>
+        🌾 Krishi Sakhi AI
       </div>
 
-      {/* Input + send */}
-      <div
-        style={{
-          padding: "10px",
-          display: "flex",
-          gap: "5px",
-          alignItems: "center",
-          marginBottom: "5px",
-          paddingRight: "40px",
-        }}
-      >
+      {/* MESSAGES */}
+      <div style={{
+  flex: 1,
+  overflowY: "auto",
+  overflowX: "hidden",  // 👈 ADD THIS
+  padding: "10px"
+}}>
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            style={{
+  textAlign: msg.type === "user" ? "right" : "left",
+  background: msg.type === "user" ? "#c8f7c5" : "#f1f1f1",
+  margin: "5px",
+  padding: "10px",
+  borderRadius: "12px",
+  maxWidth: "80%",
+  wordWrap: "break-word",
+   overflowWrap: "break-word",
+      whiteSpace: "pre-line",
+      lineHeight: "1.5",   // 👈 HERE
+      fontSize: "14px"     // 👈 HERE
+    }}
+          >
+            {msg.text}
+          </div>
+        ))}
+        <div ref={bottomRef}></div>
+      </div>
+
+      {/* INPUT */}
+      <div style={{
+        display: "flex",
+        borderTop: "1px solid #ddd"
+      }}>
         <input
-          style={{
-            flex: 1,
-            padding: "6px",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-          }}
+          type="text"
+          placeholder="Ask anything..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={"Type here..."}
+          style={{ flex: 1, padding: "8px", border: "none" }}
         />
 
-        {/* Send */}
-        <button
-          onClick={() => handleSend(input)}
-          style={{
-            background: "#2e7d32",
-            color: "#fff",
-            border: "none",
-            padding: "6px 10px",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
-        >
+        <button onClick={handleSend} style={{
+          background: "green",
+          color: "white",
+          border: "none",
+          padding: "8px 12px"
+        }}>
           Send
         </button>
       </div>
@@ -168,7 +160,3 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
-
-
-
-

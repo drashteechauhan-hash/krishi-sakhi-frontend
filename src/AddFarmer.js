@@ -26,7 +26,7 @@ function AddFarmer({ onAdded }) {
     };
 
     try {
-      await axios.post("http://localhost:8080/api/farmers", newFarmer);
+      await axios.post("/api/farmer", newFarmer);
       alert("Farmer added successfully!");
       setFormData({
         name: "",

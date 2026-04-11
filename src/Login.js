@@ -10,23 +10,29 @@ function Login({ onClose, onLogin }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", formData);
-      // Save logged in user to localStorage
-      localStorage.setItem("loggedInUser", JSON.stringify(response.data));
-      // Notify Toolbar that user is logged in
-      onLogin(response.data);
-      alert("Login successful!");
-      onClose();
-    } catch (err) {
-      if (err.response && err.response.data) {
-        alert(err.response.data.error); // shows "Invalid credentials" etc.
-      } else {
-        alert("Network error: " + err.message);
-      }
+  e.preventDefault();
+  try {
+    const response = await axios.post("http://localhost:8080/api/auth/login", formData);
+
+    // ✅ SAVE USER
+    localStorage.setItem("loggedInUser", JSON.stringify(response.data));
+
+    // ✅ ADD THIS LINE (IMPORTANT)
+    localStorage.setItem("isLoggedIn", "true");
+
+    onLogin(response.data);
+
+    alert("Login successful!");
+    onClose();
+
+  } catch (err) {
+    if (err.response && err.response.data) {
+      alert(err.response.data.error);
+    } else {
+      alert("Network error: " + err.message);
     }
-  };
+  }
+};
 
   return (
     <div className="login-modal-overlay">

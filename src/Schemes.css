@@ -52,3 +52,20 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.voice-box {
+  background: linear-gradient(135deg, #4caf50, #81c784);
+  padding: 20px;
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.voice-box button {
+  margin: 5px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+}

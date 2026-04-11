@@ -1,47 +1,40 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import MarketChart from "./MarketChart";
+import AnimatedCard from "./AnimatedCard";
 
-function MarketPrice({ commodity, location }) {
-  const [priceData, setPriceData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+function MarketPrice({ crop, state }) {
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    if (!commodity) return;
+    if (!crop || !state) return;
 
-    const fetchPrice = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(
-  `http://localhost:5050/api/market-price?commodity=${encodeURIComponent(
-    commodity
-  )}&location=${encodeURIComponent(location || "Kochi")}`
-);
+    axios
+      .get(`http://localhost:8080/api/market/price?crop=${crop}&state=${state}`)
+      .then((res) => setData(res.data))
+      .catch((err) => console.error(err));
+  }, [crop, state]);
 
-        setPriceData(res.data);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch market price.");
-        setLoading(false);
-      }
-    };
-
-    fetchPrice();
-  }, [commodity, location]);
-
-  if (loading) return <p>Loading market price...</p>;
-  if (error) return <p>{error}</p>;
-  if (!priceData) return <p>No price data available.</p>;
+  if (!data || data.message) return <p>No data found</p>;
 
   return (
-    <div>
-      <p>📈 Live Market Price — {commodity}</p>
-      <p>
-        Price: ₹{priceData.price} {priceData.unit} <br />
-        Source: {priceData.source}
-      </p>
-    </div>
+    <AnimatedCard>
+      <div className="market-card">
+        <h3>📊 Market Price</h3>
+
+        <p>🌾 {data.crop}</p>
+        <p>💰 ₹{data.price}/quintal</p>
+        <p>📍 {data.market}</p>
+        <p>🗺 {data.state}</p>
+
+        {/* 🔥 CHART */}
+        
+
+        {data.note && (
+          <p style={{ color: "orange" }}>⚠ {data.note}</p>
+        )}
+      </div>
+    </AnimatedCard>
   );
 }
 
