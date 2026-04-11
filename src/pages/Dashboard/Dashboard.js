@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Dashboard.css";
 
-import WeatherWidget from "./WeatherWidget";
-import MarketPrice from "./MarketPrice";
-import MarketChart from "./MarketChart";
-import CropPieChart from "./CropPieChart";
-import AnimatedCard from "./AnimatedCard";
-import leftImg from "./leftImage.jpg";
-import rightImg from "./rightImage.jpg";
+import WeatherWidget from "../../components/WeatherWidget/WeatherWidget";
+import MarketPrice from "../../components/charts/MarketPrice";
+import MarketChart from "../../components/charts/MarketChart";
+import CropPieChart from "../../components/charts/CropPieChart";
+import AnimatedCard from "../../components/AnimatedCard/AnimatedCard";
+
+import leftImg from "../../assets/leftImage.jpg";
+import rightImg from "../../assets/rightImage.jpg";
 
 function Dashboard() {
   const [farmers, setFarmers] = useState([]);

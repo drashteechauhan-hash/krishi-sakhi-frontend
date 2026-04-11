@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./Toolbar.css"; // modal styles
+import "../../components/Toolbar/Toolbar.css";
 
 function Login({ onClose, onLogin }) {
   const [formData, setFormData] = useState({ email: "", password: "" });

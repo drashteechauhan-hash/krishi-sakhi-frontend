@@ -1,11 +1,11 @@
 import React from "react";
-import ex1 from "./ex1.jpg";
-import ex2 from "./ex2.jpg";
-import ex3 from "./ex3.jpg";
-import ex4 from "./ex4.jpg";
-import beforeImg from "./before.jpg";
-import afterImg from "./after.jpg";
 
+import ex1 from "../../assets/ex1.jpg";
+import ex2 from "../../assets/ex2.jpg";
+import ex3 from "../../assets/ex3.jpg";
+import ex4 from "../../assets/ex4.jpg";
+import beforeImg from "../../assets/before.jpg";
+import afterImg from "../../assets/after.jpg";
 function About() {
   const heroImgStyle = { width: "300px", height: "200px", objectFit: "cover", borderRadius: "10px" };
   const featureImgStyle = { width: "80px", height: "80px", objectFit: "cover", borderRadius: "10px" };

@@ -3,10 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import { FiMoreVertical } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import "./Toolbar.css";
-import logo from "./logo.jpg";
-import Login from "./Login"; 
-import SignUp from "./SignUp"; 
 
+import logo from "../../assets/logo.jpg";
+import Login from "../../pages/Login/Login";
+import SignUp from "../../pages/SignUp/SignUp";
 function Toolbar() {
   const location = useLocation();
   const profileCompleted = JSON.parse(localStorage.getItem("profileCompleted"));

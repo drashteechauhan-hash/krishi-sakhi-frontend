@@ -2,10 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./Home.css";
-import Login from "./Login";
-import ImageSlider from "./ImageSlider";
-import FeaturesSection from "./FeaturesSection";
 
+import Login from "../../pages/Login/Login";
+import ImageSlider from "../../components/ImageSlider/ImageSlider";
+import FeaturesSection from "../../components/FeaturesSection/FeaturesSection";
 function Home({ showLogin, setShowLogin }) {
   const navigate = useNavigate();
 

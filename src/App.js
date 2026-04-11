@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./Home";
-import Onboarding from "./Onboarding";
-import Dashboard from "./Dashboard";
-import Activity from "./Activity";
-import About from "./About";
-import Toolbar from "./Toolbar";
-import Footer from "./Footer";
-import ScrollToTop from "./ScrollToTop";
-import Schemes from "./Schemes";
-import FloatingChatbot from "./FloatingChatbot";
+import Home from "./pages/Home/Home";
+import About from "./pages/About/About";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import Activity from "./pages/Activity/Activity";
+import Schemes from "./pages/Schemes/Schemes";
+import Onboarding from "./pages/Onboarding/Onboarding";
+
+// components
+import Toolbar from "./components/Toolbar/Toolbar";
+import Footer from "./components/Footer/Footer";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
+import FloatingChatbot from "./components/FloatingChatbot/FloatingChatbot";
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);

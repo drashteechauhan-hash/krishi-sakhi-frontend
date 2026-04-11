@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // <-- import axios
-import bgImage from "./assets/bg.jpg"; 
+import axios from "axios";
 import "./Onboarding.css";
 
+import bgImage from "../../assets/bg.jpg";
 function Onboarding() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

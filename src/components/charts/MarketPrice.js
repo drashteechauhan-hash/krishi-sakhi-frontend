@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MarketChart from "./MarketChart";
-import AnimatedCard from "./AnimatedCard";
+import AnimatedCard from "../AnimatedCard/AnimatedCard";
 
 function MarketPrice({ crop, state }) {
   const [data, setData] = useState(null);

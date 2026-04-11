@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./Toolbar.css";
+import "../../components/Toolbar/Toolbar.css";
 
 function SignUp({ onClose }) {
   const [formData, setFormData] = useState({

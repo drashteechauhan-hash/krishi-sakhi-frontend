@@ -1,14 +1,17 @@
 import React from "react";
 import Slider from "react-slick";
+
+// slick styles (leave as-is)
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
+// ✅ correct CSS path (same folder)
 import "./ImageSlider.css";
 
-// Import local images
-import img0 from "./img.jpg";
-import img1 from "./img1.jpg";
-import img2 from "./img2.jpg";
-
+// ✅ correct asset paths
+import img0 from "../../assets/img.jpg";
+import img1 from "../../assets/img1.jpg";
+import img2 from "../../assets/img2.jpg";
 function ImageSlider() {
   const settings = {
     dots: true,
