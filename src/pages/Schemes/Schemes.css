@@ -1,0 +1,94 @@
+.schemes-container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #fdf6e3;
+  border-radius: 15px;
+}
+
+h1 {
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 25px;
+}
+
+h2 {
+  color: #1b5e20;
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+table th,
+table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #2e7d32;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+table tr:hover {
+  background-color: #e8f5e9;
+}
+
+a {
+  color: #ff9800;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.voice-box {
+  background: linear-gradient(135deg, #4caf50, #81c784);
+  padding: 20px;
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.voice-box button {
+  margin: 5px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+}
+.schemes-container {
+  padding: 30px;
+  text-align: center;
+}
+
+.video-card {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.scheme-video {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.video-info h3 {
+  margin-top: 15px;
+  color: #2e7d32;
+}

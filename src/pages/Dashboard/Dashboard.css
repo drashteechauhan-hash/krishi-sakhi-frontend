@@ -1,0 +1,114 @@
+/* MAIN CONTAINER */
+.dashboard-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* PROFILE SECTION */
+.profile-card-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.profile-card {
+  background: #f5fff5;
+  padding: 20px;
+  border-radius: 15px;
+  min-width: 280px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* IMAGES */
+.floating-img {
+  width: 250px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transition: transform 0.3s ease;
+}
+
+.floating-img:hover {
+  transform: scale(1.05);
+}
+
+/* WEATHER + MARKET */
+.top-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* CHART BOX */
+.chart-box {
+  width: 100%;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+
+.chart-box:hover {
+  transform: translateY(-5px);
+}
+
+/* TABLE */
+.table-section {
+  margin-top: 20px;
+}
+
+.table-section h3 {
+  margin-bottom: 10px;
+}
+
+.table-section table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-section th {
+  background: #2e7d32;
+  color: white;
+  padding: 12px;
+}
+
+.table-section td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+/* SMOOTH SCROLL */
+html {
+  scroll-behavior: smooth;
+}
+.profile-card-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.profile-card {
+  min-width: 300px;
+  max-width: 350px;
+}
+
+.floating-img {
+  width: 260px;
+  height: 380px;
+  object-fit: cover;
+  border-radius: 20px;
+}

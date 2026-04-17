@@ -1,0 +1,122 @@
+[
+  {
+    "question_en": "What is the current market price of paddy?",
+    "question_ml": "പടിയുടെ ഇപ്പോഴത്തെ വിപണി വില എന്താണ്?",
+    "answer_en": "The current market price of paddy is around ₹1900 per quintal.",
+    "answer_ml": "പടിയുടെ വിപണി വില ഇപ്പോൾ ഏകദേശം ₹1900 / ക്വിൻറ്റൽ ആണ്."
+  },
+  {
+    "question_en": "Which crops are suitable for Kerala monsoon?",
+    "question_ml": "കേരളത്തിലെ മഴക്കാലത്തിന് അനുയോജ്യമായ വിളകൾ ഏതൊക്കെ?",
+    "answer_en": "Paddy, coconut, banana, and vegetables like brinjal, tomato, and okra are suitable.",
+    "answer_ml": "പട, തേങ്ങ, വാഴ, വാഴുതന, തക്കാളി, വെണ്ട തുടങ്ങിയ പച്ചക്കറികൾ മഴക്കാലത്ത് അനുയോജ്യമാണ്."
+  },
+  {
+    "question_en": "How can I apply for PM-Kisan scheme?",
+    "question_ml": "പി.എം-കിസാൻ പദ്ധതിയിൽ അപേക്ഷിക്കേണ്ടത് എങ്ങനെ?",
+    "answer_en": "You can apply via the PM-Kisan official website or visit the local Krishi office.",
+    "answer_ml": "പി.എം-കിസാൻ പദ്ധതിയിൽ അപേക്ഷിക്കാൻ ഔദ്യോഗിക വെബ്സൈറ്റ് അല്ലെങ്കിൽ പ്രാദേശിക കൃഷി ഓഫീസിൽ പോകണം."
+  },
+  {
+    "question_en": "When should I start sowing paddy in Kerala?",
+    "question_ml": "കേരളത്തിൽ പട വിത്ത് തുടങ്ങേണ്ടത് എപ്പോഴാണ്?",
+    "answer_en": "The best sowing time for paddy is at the beginning of the monsoon, usually June–July.",
+    "answer_ml": "കേരളത്തിൽ പട വയലിന് മികച്ച വിത്ത് നട്ടു തുടങ്ങേണ്ട സമയം മഴക്കാലത്തിന്റെ ആരംഭം, സാധാരണ ജൂൺ–ജൂലൈ ആണ്."
+  },
+  {
+    "question_en": "How do I prevent pest attacks on brinjal?",
+    "question_ml": "വാഴുതനയിൽ കീടാക്രമണം തടയാൻ എങ്ങനെ?",
+    "answer_en": "Use neem-based pesticides and maintain proper spacing between plants.",
+    "answer_ml": "വേപ്പില അടിസ്ഥാനത്തിലുള്ള കീടനാശിനികൾ ഉപയോഗിക്കുക, ചെടികൾക്കിടയിൽ ശരിയായ അകലം പാലിക്കുക."
+  },
+  {
+    "question_en": "Which fertilizer is best for coconut trees?",
+    "question_ml": "തേങ്ങയ്ക്കായി ഏറ്റവും നല്ല വളം ഏതാണ്?",
+    "answer_en": "Use a balanced NPK fertilizer along with organic manure like compost or cow dung.",
+    "answer_ml": "സമതുലിത NPK വളം ഉപയോഗിക്കുക, കോമ്പോസ്റ്റ് അല്ലെങ്കിൽ പശുവോളെ ചേർക്കുക."
+  },
+  {
+    "question_en": "How often should I irrigate banana plants?",
+    "question_ml": "വാഴച്ചെടികൾക്ക് എത്ര തവണ ജലസേചനം ചെയ്യണം?",
+    "answer_en": "Banana plants need water every 2–3 days depending on rainfall and soil moisture.",
+    "answer_ml": "വാഴച്ചെടികൾക്ക് മഴയും മണ്ണിലെ വരണ്ടാവസ്ഥയും അനുസരിച്ച് 2–3 ദിവസത്തിലൊരിക്കൽ ജലസേചനം ആവശ്യമുണ്ട്."
+  },
+  {
+    "question_en": "What is the best soil type for paddy?",
+    "question_ml": "പടവയലിന് ഏറ്റവും അനുയോജ്യമായ മണ്ണ് ഏതാണ്?",
+    "answer_en": "Clayey loam soil with good water retention is ideal for paddy cultivation.",
+    "answer_ml": "നല്ല വെള്ളം നിലനിൽപ്പുള്ള ചായ മണ്ണ് (Clayey loam) പടവയലിന് ഏറ്റവും അനുയോജ്യം ആണ്."
+  },
+  {
+    "question_en": "How can I protect my crops from heavy rains?",
+    "question_ml": "എന്റെ വിളകൾ ശക്തമായ മഴയിൽ നിന്ന് എങ്ങനെ സംരക്ഷിക്കാം?",
+    "answer_en": "Ensure proper drainage and use raised beds for vegetable crops.",
+    "answer_ml": "ശരിയായ ജലനിരപ്പ് ഉറപ്പാക്കുക, പച്ചക്കറികൾക്ക് ഉയർന്ന കയറുകൾ ഉപയോഗിക്കുക."
+  },
+  {
+    "question_en": "What is the ideal temperature for tomato cultivation?",
+    "question_ml": "തക്കാളി കൃഷിക്ക് അനുയോജ്യമായ താപനില എന്താണ്?",
+    "answer_en": "Tomatoes grow best between 20–30°C.",
+    "answer_ml": "തക്കാളി 20–30°C ഇടയിൽ വളരുന്നത് ഏറ്റവും നല്ലതാണ്."
+  },
+  {
+    "question_en": "How to store harvested paddy safely?",
+    "question_ml": "കൊയ്തെടുത്ത പടി സുരക്ഷിതമായി എങ്ങനെ സൂക്ഷിക്കാം?",
+    "answer_en": "Dry thoroughly and store in a ventilated, moisture-free area.",
+    "answer_ml": "നന്നായി ഉണക്കുക, കരകൗശലമുള്ള, ശുഷ്കമേഖലയിലുള്ള സ്ഥലത്ത് സൂക്ഷിക്കുക."
+  },
+  {
+    "question_en": "Which vegetable grows well in Kerala's humid climate?",
+    "question_ml": "കേരളത്തിലെ ഈർപ്പമുള്ള കാലാവസ്ഥയിൽ ഏത് പച്ചക്കറികൾ വളരുന്നു?",
+    "answer_en": "Okra, brinjal, and bitter gourd thrive in humid conditions.",
+    "answer_ml": "വെണ്ട, വാഴുതന, പാവൽ എന്നീ പച്ചക്കറികൾ ഈർപ്പമുള്ള കാലാവസ്ഥയിൽ വളരുന്നു."
+  },
+  {
+    "question_en": "How do I control leaf spot disease in coconut?",
+    "question_ml": "തേങ്ങയിൽ ഇല പുള്ളിപ്പനി എങ്ങനെ നിയന്ത്രിക്കാം?",
+    "answer_en": "Apply Bordeaux mixture and maintain proper sanitation around trees.",
+    "answer_ml": "ബോർഡോ മിശ്രിതം ഉപയോഗിക്കുക, വൃക്ഷങ്ങളുടെ ചുറ്റുമുള്ള ശുചിത്വം പാലിക്കുക."
+  },
+  {
+    "question_en": "When should I harvest bananas?",
+    "question_ml": "വാഴപ്പഴം കൊയ്യേണ്ടത് എപ്പോഴാണ്?",
+    "answer_en": "Bananas are usually ready after 75-80 days.",
+    "answer_ml": "വാഴപ്പഴം സാധാരണയായി 75–80 ദിവസങ്ങൾക്ക് ശേഷം കൊയ്യണം."
+  },
+  {
+    "question_en": "What is drip irrigation?",
+    "question_ml": "ഡ്രിപ്പ് ജലസേചനം എന്താണ്?",
+    "answer_en": "Drip irrigation is a method where water is delivered directly to the plant roots slowly.",
+    "answer_ml": "ഡ്രിപ്പ് ജലസേചനം ചെടികളുടെ മൂലങ്ങളിൽ നേരിട്ട് വെള്ളം ചെറിയ തോതിൽ എത്തിക്കുന്ന രീതിയാണ്."
+  },
+  {
+    "question_en": "Which pests attack brinjal the most?",
+    "question_ml": "വാഴുതനയിൽ ഏതു കീടങ്ങളാണ് കൂടുതലായി ആക്രമിക്കുന്നത്?",
+    "answer_en": "Fruit and shoot borer is the major pest for brinjal.",
+    "answer_ml": "ഫ്രൂട്ട് ആൻഡ് ഷൂട്ട് ബോറർ ആണ് വാഴുതനയിലെ പ്രധാന കീടം."
+  },
+  {
+    "question_en": "How can I increase coconut yield?",
+    "question_ml": "തേങ്ങയുടെ വിളവ് എങ്ങനെ വർദ്ധിപ്പിക്കാം?",
+    "answer_en": "Use balanced fertilizers, irrigate regularly, and control pests.",
+    "answer_ml": "സമതുലിത വളങ്ങൾ ഉപയോഗിക്കുക, നിയമിതമായി ജലസേചനം ചെയ്യുക, കീടങ്ങളെ നിയന്ത്രിക്കുക."
+  },
+  {
+    "question_en": "How to prevent fungal diseases in paddy?",
+    "question_ml": "പടിയിൽ ഫംഗസ് രോഗങ്ങൾ തടയാൻ എങ്ങനെ?",
+    "answer_en": "Avoid water stagnation and use recommended fungicides.",
+    "answer_ml": "വെള്ളം നിൽക്കാതെ നോക്കുക, നിർദ്ദേശിച്ച ഫംഗിസൈഡുകൾ ഉപയോഗിക്കുക."
+  },
+  {
+    "question_en": "What is organic farming?",
+    "question_ml": "ഓർഗാനിക് കൃഷി എന്താണ്?",
+    "answer_en": "Farming using natural fertilizers and pest control without chemicals.",
+    "answer_ml": "രാസവസ്തുക്കൾ ഇല്ലാതെ പ്രകൃതിദത്ത വളങ്ങളും കീടനാശിനികളും ഉപയോഗിച്ച് കൃഷി ചെയ്യുന്നതാണ് ഓർഗാനിക് കൃഷി."
+  },
+  {
+    "question_en": "How do I know when to irrigate my crop?",
+    "question_ml": "എന്റെ വിളയ്ക്ക് എപ്പോഴാണ് ജലസേചനം ചെയ്യേണ്ടത് എന്ന് എങ്ങനെ അറിയാം?",
+    "answer_en": "Check soil moisture and rainfall; irrigate when needed.",
+    "answer_ml": "മണ്ണിലെ ഈർപ്പം, മഴ പരിശോധിക്കുക; ആവശ്യമുള്ളപ്പോൾ ജലസേചനം ചെയ്യുക."
+  }
+]
