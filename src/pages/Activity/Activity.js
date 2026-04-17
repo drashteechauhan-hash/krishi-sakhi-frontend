@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useLanguage } from "../../context/LanguageContext";
 import "./Activity.css";
 
@@ -47,6 +48,16 @@ function Activity() {
   const [listening, setListening] = useState(false);
 
   // Load logs from localStorage on mount
+=======
+import "./Activity.css";
+
+function Activity() {
+  const [activity, setActivity] = useState("");
+  const [logs, setLogs] = useState([]);
+  const [lang, setLang] = useState("ml-IN"); // Default Malayalam
+
+  // Load logs from localStorage
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("activityLogs")) || [];
     setLogs(stored);
@@ -54,12 +65,19 @@ function Activity() {
 
   // Save new log
   const handleAdd = () => {
+<<<<<<< HEAD
     const trimmed = activity.trim();
     if (!trimmed) return;
     const newLog = {
       text: trimmed,
       date: new Date().toLocaleDateString(),
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+=======
+    if (!activity.trim()) return;
+    const newLog = {
+      text: activity,
+      date: new Date().toLocaleDateString(),
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
     };
     const updatedLogs = [newLog, ...logs];
     setLogs(updatedLogs);
@@ -67,6 +85,7 @@ function Activity() {
     setActivity("");
   };
 
+<<<<<<< HEAD
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleAdd();
   };
@@ -74,10 +93,15 @@ function Activity() {
   // Clear all logs
   const handleClear = () => {
     if (!window.confirm(t.confirmClear)) return;
+=======
+  // Clear all logs
+  const handleClear = () => {
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
     setLogs([]);
     localStorage.removeItem("activityLogs");
   };
 
+<<<<<<< HEAD
   // Voice input — uses app language automatically
   const handleVoiceInput = () => {
     if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -95,10 +119,34 @@ function Activity() {
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
+=======
+  // 🎤 Start speech recognition
+  const handleVoiceInput = () => {
+    if (!("webkitSpeechRecognition" in window)) {
+      alert("Speech Recognition not supported in this browser!");
+      return;
+    }
+
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.lang = lang;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.start();
+
+    recognition.onstart = () => {
+      console.log("🎤 Listening in", lang);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      console.log("✅ Transcript:", transcript);
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
       setActivity(transcript);
     };
 
     recognition.onerror = (event) => {
+<<<<<<< HEAD
       setListening(false);
       alert("Mic error: " + event.error);
     };
@@ -106,15 +154,40 @@ function Activity() {
     recognition.start();
   };
 
+=======
+      console.error("❌ Error:", event.error);
+      alert("Mic Error: " + event.error);
+    };
+  };
+
+  // 📝 Placeholder text based on selected language
+  const placeholderText =
+    lang === "ml-IN" ? "ഇന്ന് അരി വിതച്ചു" : "I sowed paddy today";
+
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
   return (
     <div className="activity-container">
       {/* Input Card */}
       <div className="activity-card">
+<<<<<<< HEAD
         <h2>{t.title}</h2>
+=======
+        <h2>✍️ Log Today’s Work / ഇന്നത്തെ പ്രവർത്തി രേഖപ്പെടുത്തുക</h2>
+
+        {/* 🌐 Language selector */}
+        <div className="lang-select">
+          <label>🌐 Language: </label>
+          <select value={lang} onChange={(e) => setLang(e.target.value)}>
+            <option value="ml-IN">Malayalam</option>
+            <option value="en-IN">English</option>
+          </select>
+        </div>
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
 
         <div className="input-row">
           <input
             type="text"
+<<<<<<< HEAD
             placeholder={t.placeholder}
             value={activity}
             onChange={(e) => setActivity(e.target.value)}
@@ -132,20 +205,46 @@ function Activity() {
           </button>
           <button className="clear-btn" onClick={handleClear}>
             🗑️ {t.clearBtn}
+=======
+            placeholder={placeholderText}
+            value={activity}
+            onChange={(e) => setActivity(e.target.value)}
+          />
+          <button className="speak-btn" onClick={handleVoiceInput}>
+            🎤 Speak / സംസാരിക്കുക
+          </button>
+          <button className="add-btn" onClick={handleAdd}>
+            ➕ Add / ചേർക്കുക
+          </button>
+          <button className="clear-btn" onClick={handleClear}>
+            🗑️ Clear / മായ്ക്കുക
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
           </button>
         </div>
       </div>
 
       {/* Logs Section */}
       <div className="logs-section">
+<<<<<<< HEAD
         <h3>📅 {t.diaryTitle}</h3>
         {logs.length === 0 ? (
           <p className="empty">{t.empty}</p>
+=======
+        <h3>📅 My Activity Diary / എന്റെ പ്രവർത്തി ഡയറി</h3>
+        {logs.length === 0 ? (
+          <p className="empty">
+            No work logged yet 🌾 / ഇപ്പോഴും പ്രവർത്തി ഒന്നും ചേർത്തിട്ടില്ല
+          </p>
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
         ) : (
           <ul className="timeline">
             {logs.map((log, index) => (
               <li key={index}>
+<<<<<<< HEAD
                 <span className="date">{log.date}{log.time ? ` · ${log.time}` : ""}</span>
+=======
+                <span className="date">{log.date}</span>
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
                 <span className="text">{log.text}</span>
               </li>
             ))}
@@ -156,4 +255,8 @@ function Activity() {
   );
 }
 
+<<<<<<< HEAD
 export default Activity;
+=======
+export default Activity;
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b

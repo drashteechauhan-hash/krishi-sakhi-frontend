@@ -21,5 +21,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< HEAD
 "node_modules/" 
 "build/" 
+=======
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b

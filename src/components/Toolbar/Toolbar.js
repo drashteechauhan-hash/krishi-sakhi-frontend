@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+=======
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
 import { FiMoreVertical } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import "./Toolbar.css";
@@ -7,6 +12,7 @@ import "./Toolbar.css";
 import logo from "../../assets/logo.jpg";
 import Login from "../../pages/Login/Login";
 import SignUp from "../../pages/SignUp/SignUp";
+<<<<<<< HEAD
 import { useLanguage } from "../../context/LanguageContext";
 
 const LANGS = [
@@ -186,6 +192,58 @@ export default function Toolbar() {
                 </div>
               )}
             </div>
+=======
+function Toolbar() {
+  const location = useLocation();
+  const profileCompleted = JSON.parse(localStorage.getItem("profileCompleted"));
+
+  // ✅ Hooks must be inside the component
+  const [user, setUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("loggedInUser");
+    if (storedUser) setUser(JSON.parse(storedUser));
+  }, []);
+
+  const handleLogout = () => {
+  localStorage.removeItem("loggedInUser");
+  window.location.reload(); // refresh UI to clear dashboard
+};
+
+
+  const getActiveClass = (path) => (location.pathname === path ? "active" : "");
+
+  return (
+    <>
+      <div className="toolbar">
+        <div className="toolbar-left">
+          <img src={logo} alt="Logo" className="toolbar-logo" />
+          <span className="site-name">Krishi Sakhi</span>
+        </div>
+
+        <div className="toolbar-center">
+          <Link className={getActiveClass("/")} to="/">Home</Link>
+          <Link className={getActiveClass("/about")} to="/about">About</Link>
+          <Link className={getActiveClass("/onboarding")} to="/onboarding">Profile</Link>
+          <Link className={getActiveClass("/schemes")} to="/schemes">Schemes</Link>
+          {profileCompleted ? (
+            <Link className={getActiveClass("/dashboard")} to="/dashboard">Dashboard</Link>
+          ) : (
+            <span className="disabled">Dashboard</span>
+          )}
+          <Link className={getActiveClass("/activity")} to="/activity">Activity</Link>
+        </div>
+
+        <div className="toolbar-right" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {user ? (
+            <>
+              <span style={{ color: "#8ef494ff" }}>✅ You already have a profile</span>
+              <button className="auth-btn" onClick={handleLogout}>Logout</button>
+            </>
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
           ) : (
             <>
               <button className="auth-btn" onClick={() => setShowLogin(true)}>Login</button>
@@ -193,6 +251,7 @@ export default function Toolbar() {
             </>
           )}
 
+<<<<<<< HEAD
           {/* More ⋮ */}
           <div ref={dropRef} style={{ position:"relative" }}>
             <FiMoreVertical size={20} onClick={() => setDropdownOpen(o => !o)} style={{ cursor:"pointer", color:"rgba(240,232,213,0.45)", display:"block" }} />
@@ -201,12 +260,37 @@ export default function Toolbar() {
                 <Link to="/contact"     onClick={() => setDropdownOpen(false)} style={MI}>📩 Contact Us</Link>
                 <Link to="/suggestions" onClick={() => setDropdownOpen(false)} style={MI}>💡 Suggestions</Link>
                 <Link to="/help"        onClick={() => setDropdownOpen(false)} style={MI}>❓ Help</Link>
+=======
+          <div className="more-dropdown" style={{ position: "relative" }}>
+            <FiMoreVertical
+              size={25}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              style={{ cursor: "pointer" }}
+            />
+            {dropdownOpen && (
+              <div className="dropdown-menu" style={{
+                position: "absolute",
+                top: "30px",
+                right: "0",
+                background: "white",
+                borderRadius: "5px",
+                boxShadow: "0 0 8px rgba(0,0,0,0.2)",
+                display: "flex",
+                flexDirection: "column",
+                minWidth: "150px",
+                zIndex: 10
+              }}>
+                <Link to="/contact" onClick={() => setDropdownOpen(false)}>Contact Us</Link>
+                <Link to="/suggestions" onClick={() => setDropdownOpen(false)}>Suggestions</Link>
+                <Link to="/help" onClick={() => setDropdownOpen(false)}>Help</Link>
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
               </div>
             )}
           </div>
         </div>
       </div>
 
+<<<<<<< HEAD
       {showLogin && (
         <div className="modal-overlay" onClick={e => { if (e.target.classList.contains("modal-overlay")) setShowLogin(false); }}>
           <div className="modal-content">
@@ -224,12 +308,45 @@ export default function Toolbar() {
           </div>
         </div>
       )}
+=======
+      {/* Login Modal */}
+{showLogin && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <IoClose size={30} className="close-btn" onClick={() => setShowLogin(false)} />
+      <Login 
+        onClose={() => setShowLogin(false)} 
+        onLogin={(loggedInUser) => setUser(loggedInUser)} 
+      />
+    </div>
+  </div>
+)}
+
+{showSignUp && (
+  <div className="modal-overlay">
+    <div className="modal-content signup">
+      <IoClose size={30} className="close-btn" onClick={() => setShowSignUp(false)} />
+      <SignUp 
+        onClose={() => setShowSignUp(false)} 
+        onSignup={(loggedInUser) => setUser(loggedInUser)} 
+      />
+    </div>
+  </div>
+)}
+
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
     </>
   );
 }
 
+<<<<<<< HEAD
 const MI = {
   display:"block", padding:"10px 16px",
   color:"#d4c4a0", fontSize:13, textDecoration:"none",
   fontFamily:"'DM Sans',sans-serif", transition:"background 0.15s",
 };
+=======
+export default Toolbar;
+
+
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b

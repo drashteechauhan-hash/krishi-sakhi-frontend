@@ -69,6 +69,7 @@ a:hover {
   border: none;
   cursor: pointer;
 }
+<<<<<<< HEAD
 .schemes-container {
   padding: 30px;
   text-align: center;
@@ -92,3 +93,5 @@ a:hover {
   margin-top: 15px;
   color: #2e7d32;
 }
+=======
+>>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
