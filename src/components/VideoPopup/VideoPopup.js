@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./VideoPopup.css";
-import videoFile from "../../assets/videos/schemes.mp4";
+const videoFile = "https://res.cloudinary.com/dnqwvrwyw/video/upload/v1776486726/schemes_qqtyw3.mp4";
 
 function VideoPopup() {
   const [show, setShow] = useState(true);

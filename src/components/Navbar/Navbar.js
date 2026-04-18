@@ -14,11 +14,8 @@ function Navbar() {
         <Link to="/about">About</Link>
         <Link to="/features">Features</Link>
         <Link to="/contact">Contact</Link>
-<<<<<<< HEAD
         <Link to="/soil-health">🧪 Soil Health</Link>
 
-=======
->>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
       </div>
 
       <div className="navbar-right">

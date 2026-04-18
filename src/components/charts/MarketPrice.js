@@ -10,11 +10,7 @@ function MarketPrice({ crop, state }) {
     if (!crop || !state) return;
 
     axios
-<<<<<<< HEAD
       .get(`https://krishi-sakhi-backend-6.onrender.com/api/market/price?crop=${crop}&state=${state}`)
-=======
-      .get(`http://localhost:8080/api/market/price?crop=${crop}&state=${state}`)
->>>>>>> 50afdea6ba75fd1ee9991631a0b1a5305299959b
       .then((res) => setData(res.data))
       .catch((err) => console.error(err));
   }, [crop, state]);
