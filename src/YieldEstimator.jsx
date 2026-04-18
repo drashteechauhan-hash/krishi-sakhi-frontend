@@ -7,7 +7,7 @@ function YieldEstimator({ crop, landSize }) {
 
   useEffect(() => {
     if (!crop) return;
-    fetch(`http://localhost:5050/api/market-price?commodity=${crop}&location=Kochi`)
+    fetch(`https://krishi-sakhi-frontend-4s0c.onrender.com/api/market-price?commodity=${crop}&location=Kochi`)
       .then((res) => res.json())
       .then((data) => setPriceData(data))
       .catch(() => setPriceData(null));

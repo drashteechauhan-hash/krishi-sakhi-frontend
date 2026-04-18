@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useLanguage } from "../../context/LanguageContext";
-const soilVideo = "https://res.cloudinary.com/dnqwvrwyw/video/upload/v1776486748/Soil_health_card_jnst9g.mp4";// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const soilVideo = "https://res.cloudinary.com/dnqwvrwyw/video/upload/v1776486748/Soil_health_card_jnst9g.mp4";
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
 const CROPS = [
   { name:"Rice",      nameML:"നെല്ല്",    nameHI:"धान",     icon:"🌾", defaults:{ N:80,  P:40, K:40, temperature:28, humidity:82, ph:6.5, rainfall:200 } },
