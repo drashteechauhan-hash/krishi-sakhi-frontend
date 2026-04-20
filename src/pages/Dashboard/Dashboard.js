@@ -13,168 +13,6 @@ const API_KEY_WEATHER = process.env.REACT_APP_WEATHER_API_KEY || "d7a2c44cdd3c9b
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const CROP_COLORS = ["#4caf65","#c47f1a","#60a5fa","#f472b6","#a78bfa","#34d399","#fbbf24","#f87171"];
 
-const TEXT = {
-  en: {
-    welcome: "Welcome back 🌿",
-    profiles: "Profiles",
-    totalLand: "Total Land",
-    crops: "Crops",
-    tabOverview: "📊 Overview",
-    tabProfiles: "👤 All Profiles",
-    tabAnalytics: "📈 Analytics",
-    loading: "Loading profiles…",
-    locked: "Access Restricted",
-    lockedSub: "Please log in to view your farming dashboard",
-    latestBadge: "✦ Latest Profile",
-    cropLabel: "Crop",
-    landLabel: "Land",
-    soilLabel: "Soil",
-    waterLabel: "Water",
-    weatherTag: "🌤 Live Weather",
-    weatherTitle: "Conditions",
-    fetchingWeather: "Fetching weather…",
-    feels: "Feels",
-    rain: "Rain",
-    humidity: "Humidity",
-    wind: "Wind",
-    rainAlert: "🌧 Rain expected — avoid pesticide spraying",
-    clearAlert: "☀️ Clear skies — good for field work",
-    marketTag: "📈 Market Price",
-    marketTitle: "Current Rates",
-    fetchingMarket: "Fetching prices…",
-    perQuintal: "/ quintal",
-    trendLabel: "Est. Price Trend",
-    noPrice: "No price data for",
-    landTag: "🌾 Land Holdings",
-    landTitle: "Acres per Profile",
-    soilTag: "🪨 Soil Distribution",
-    soilTitle: "Soil Types Used",
-    profilesTag: "👤 Farmer Profiles",
-    profilesTitle: "All Profiles",
-    noProfiles: "No profiles yet.",
-    addFirst: "Add your first profile →",
-    tableHeaders: ["#", "Name", "Location", "Crop", "Land (ac)", "Soil", "Irrigation"],
-    profileHistTag: "📋 Profile History",
-    profileHistTitle: "All Submitted Profiles",
-    analyticsLandTag: "🌾 Land Over Time",
-    analyticsLandTitle: "Land Holdings by Profile",
-    analyticsSoilTag: "🪨 Soil Analysis",
-    analyticsSoilTitle: "Soil Type Breakdown",
-    analyticsCropTag: "🌱 Crop Diversity",
-    analyticsCropTitle: "Crops Across Profiles",
-    noData: "No data yet",
-    noCrop: "No crop data",
-    acresSuffix: " ac",
-    pillLabels: ["Total Profiles", "Total Land", "Crops Grown", "Soil Types"],
-  },
-  hi: {
-    welcome: "वापसी पर स्वागत है 🌿",
-    profiles: "प्रोफाइल",
-    totalLand: "कुल ज़मीन",
-    crops: "फसलें",
-    tabOverview: "📊 अवलोकन",
-    tabProfiles: "👤 सभी प्रोफाइल",
-    tabAnalytics: "📈 विश्लेषण",
-    loading: "प्रोफाइल लोड हो रहे हैं…",
-    locked: "पहुंच प्रतिबंधित",
-    lockedSub: "अपना डैशबोर्ड देखने के लिए लॉगिन करें",
-    latestBadge: "✦ नवीनतम प्रोफाइल",
-    cropLabel: "फसल",
-    landLabel: "ज़मीन",
-    soilLabel: "मिट्टी",
-    waterLabel: "सिंचाई",
-    weatherTag: "🌤 लाइव मौसम",
-    weatherTitle: "वर्तमान स्थिति",
-    fetchingWeather: "मौसम डेटा आ रहा है…",
-    feels: "महसूस",
-    rain: "बारिश",
-    humidity: "नमी",
-    wind: "हवा",
-    rainAlert: "🌧 बारिश की संभावना — कीटनाशक न छिड़कें",
-    clearAlert: "☀️ साफ आसमान — खेती के लिए अच्छा",
-    marketTag: "📈 बाज़ार मूल्य",
-    marketTitle: "वर्तमान दरें",
-    fetchingMarket: "मूल्य डेटा आ रहा है…",
-    perQuintal: "/ क्विंटल",
-    trendLabel: "अनुमानित मूल्य प्रवृत्ति",
-    noPrice: "कोई मूल्य डेटा नहीं",
-    landTag: "🌾 भूमि जोत",
-    landTitle: "प्रोफाइल अनुसार एकड़",
-    soilTag: "🪨 मिट्टी वितरण",
-    soilTitle: "उपयोग किए गए मिट्टी प्रकार",
-    profilesTag: "👤 किसान प्रोफाइल",
-    profilesTitle: "सभी प्रोफाइल",
-    noProfiles: "अभी तक कोई प्रोफाइल नहीं।",
-    addFirst: "पहली प्रोफाइल जोड़ें →",
-    tableHeaders: ["#", "नाम", "स्थान", "फसल", "ज़मीन (एकड़)", "मिट्टी", "सिंचाई"],
-    profileHistTag: "📋 प्रोफाइल इतिहास",
-    profileHistTitle: "सभी सबमिट की गई प्रोफाइल",
-    analyticsLandTag: "🌾 समय के साथ भूमि",
-    analyticsLandTitle: "प्रोफाइल अनुसार भूमि जोत",
-    analyticsSoilTag: "🪨 मिट्टी विश्लेषण",
-    analyticsSoilTitle: "मिट्टी के प्रकार",
-    analyticsCropTag: "🌱 फसल विविधता",
-    analyticsCropTitle: "सभी प्रोफाइल में फसलें",
-    noData: "अभी कोई डेटा नहीं",
-    noCrop: "फसल डेटा नहीं",
-    acresSuffix: " एकड़",
-    pillLabels: ["कुल प्रोफाइल", "कुल ज़मीन", "उगाई गई फसलें", "मिट्टी के प्रकार"],
-  },
-  ml: {
-    welcome: "തിരിച്ചു സ്വാഗതം 🌿",
-    profiles: "പ്രൊഫൈലുകൾ",
-    totalLand: "മൊത്തം ഭൂമി",
-    crops: "വിളകൾ",
-    tabOverview: "📊 അവലോകനം",
-    tabProfiles: "👤 എല്ലാ പ്രൊഫൈലുകൾ",
-    tabAnalytics: "📈 വിശകലനം",
-    loading: "പ്രൊഫൈലുകൾ ലോഡ് ചെയ്യുന്നു…",
-    locked: "പ്രവേശനം നിയന്ത്രിതം",
-    lockedSub: "ഡാഷ്ബോർഡ് കാണാൻ ലോഗിൻ ചെയ്യൂ",
-    latestBadge: "✦ ഏറ്റവും പുതിയ പ്രൊഫൈൽ",
-    cropLabel: "വിള",
-    landLabel: "ഭൂമി",
-    soilLabel: "മണ്ണ്",
-    waterLabel: "ജലസേചനം",
-    weatherTag: "🌤 തത്സമയ കാലാവസ്ഥ",
-    weatherTitle: "ഇപ്പോഴത്തെ സ്ഥിതി",
-    fetchingWeather: "കാലാവസ്ഥ ലഭ്യമാക്കുന്നു…",
-    feels: "അനുഭവം",
-    rain: "മഴ",
-    humidity: "ആർദ്രത",
-    wind: "കാറ്റ്",
-    rainAlert: "🌧 മഴ പ്രതീക്ഷിക്കുന്നു — കീടനാശിനി തളിക്കരുത്",
-    clearAlert: "☀️ തെളിഞ്ഞ ആകാശം — ജോലിക്ക് അനുകൂലം",
-    marketTag: "📈 വിപണി വില",
-    marketTitle: "നിലവിലെ നിരക്ക്",
-    fetchingMarket: "വില ലഭ്യമാക്കുന്നു…",
-    perQuintal: "/ ക്വിന്റൽ",
-    trendLabel: "ഏകദേശ വില ട്രെൻഡ്",
-    noPrice: "വില ഡേറ്റ ലഭ്യമല്ല",
-    landTag: "🌾 ഭൂമി ഉടമസ്ഥത",
-    landTitle: "പ്രൊഫൈൽ അനുസരിച്ച് ഏക്കർ",
-    soilTag: "🪨 മണ്ണ് വിതരണം",
-    soilTitle: "ഉപയോഗിക്കുന്ന മണ്ണ് തരങ്ങൾ",
-    profilesTag: "👤 കർഷക പ്രൊഫൈലുകൾ",
-    profilesTitle: "എല്ലാ പ്രൊഫൈലുകൾ",
-    noProfiles: "ഇതുവരെ പ്രൊഫൈൽ ഇല്ല.",
-    addFirst: "ആദ്യ പ്രൊഫൈൽ ചേർക്കൂ →",
-    tableHeaders: ["#", "പേര്", "സ്ഥലം", "വിള", "ഭൂമി (ഏ)", "മണ്ണ്", "ജലസേചനം"],
-    profileHistTag: "📋 പ്രൊഫൈൽ ചരിത്രം",
-    profileHistTitle: "സമർപ്പിച്ച എല്ലാ പ്രൊഫൈലുകൾ",
-    analyticsLandTag: "🌾 ഭൂമി കാലക്രമം",
-    analyticsLandTitle: "പ്രൊഫൈൽ തിരിച്ച് ഭൂമി",
-    analyticsSoilTag: "🪨 മണ്ണ് വിശകലനം",
-    analyticsSoilTitle: "മണ്ണ് തരം ബ്രേക്ക്ഡൗൺ",
-    analyticsCropTag: "🌱 വിള വൈവിധ്യം",
-    analyticsCropTitle: "പ്രൊഫൈലുകളിൽ വിളകൾ",
-    noData: "ഇതുവരെ ഡേറ്റ ഇല്ല",
-    noCrop: "വിള ഡേറ്റ ഇല്ല",
-    acresSuffix: " ഏ",
-    pillLabels: ["മൊത്തം പ്രൊഫൈൽ", "മൊത്തം ഭൂമി", "ഉൽപ്പാദിപ്പിക്കുന്ന വിളകൾ", "മണ്ണ് തരങ്ങൾ"],
-  },
-};
-
 function AnimNum({ value, prefix = "", suffix = "", decimals = 0 }) {
   const [disp, setDisp] = useState(0);
   useEffect(() => {
@@ -192,7 +30,7 @@ function AnimNum({ value, prefix = "", suffix = "", decimals = 0 }) {
   return <span>{prefix}{typeof disp === 'number' ? disp.toFixed(decimals) : disp}{suffix}</span>;
 }
 
-function WeatherPanel({ city, t }) {
+function WeatherPanel({ city, tFn }) {
   const [w, setW] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
@@ -220,9 +58,9 @@ function WeatherPanel({ city, t }) {
 
   return (
     <div className="db-card">
-      <div className="db-card-tag">{t.weatherTag}</div>
-      <div className="db-card-title">{t.weatherTitle}</div>
-      {loading && <div className="db-muted-text">{t.fetchingWeather}</div>}
+      <div className="db-card-tag">{tFn("dash_weather_tag")}</div>
+      <div className="db-card-title">{tFn("dash_weather_title")}</div>
+      {loading && <div className="db-muted-text">{tFn("dash_fetching_weather")}</div>}
       {err && <div className="db-err">{err}</div>}
       {w && !loading && (
         <>
@@ -235,7 +73,12 @@ function WeatherPanel({ city, t }) {
             </div>
           </div>
           <div className="db-weather-grid">
-            {[["💧", w.humidity + "%", t.humidity], ["🌬", w.wind + " km/h", t.wind], ["🌡", w.feels + "°C", t.feels], ["🌧", w.rain + " mm", t.rain]].map(([ic, v, l]) => (
+            {[
+              ["💧", w.humidity + "%", tFn("dash_humidity")],
+              ["🌬", w.wind + " km/h", tFn("dash_wind")],
+              ["🌡", w.feels + "°C", tFn("dash_feels")],
+              ["🌧", w.rain + " mm", tFn("dash_rain")]
+            ].map(([ic, v, l]) => (
               <div key={l} className="db-wstat">
                 <span className="db-wstat-ic">{ic}</span>
                 <span className="db-wstat-v">{v}</span>
@@ -244,7 +87,7 @@ function WeatherPanel({ city, t }) {
             ))}
           </div>
           <div className={`db-weather-alert ${willRain ? "rain" : "ok"}`}>
-            {willRain ? t.rainAlert : t.clearAlert}
+            {willRain ? tFn("dash_rain_alert") : tFn("dash_clear_alert")}
           </div>
         </>
       )}
@@ -252,7 +95,7 @@ function WeatherPanel({ city, t }) {
   );
 }
 
-function MarketPanel({ crop, state, t }) {
+function MarketPanel({ crop, state, tFn }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -272,21 +115,21 @@ function MarketPanel({ crop, state, t }) {
 
   return (
     <div className="db-card">
-      <div className="db-card-tag">{t.marketTag}</div>
-      <div className="db-card-title">{t.marketTitle}</div>
-      {loading && <div className="db-muted-text">{t.fetchingMarket}</div>}
+      <div className="db-card-tag">{tFn("dash_market_tag")}</div>
+      <div className="db-card-title">{tFn("dash_market_title")}</div>
+      {loading && <div className="db-muted-text">{tFn("dash_fetching_market")}</div>}
       {!loading && data?.price && (
         <>
           <div className="db-market-crop">{data.crop || crop}</div>
           <div className="db-market-price">
             ₹ <AnimNum value={data.price} />
-            <span className="db-market-unit"> {t.perQuintal}</span>
+            <span className="db-market-unit"> {tFn("dash_per_quintal")}</span>
           </div>
           <div className="db-market-meta">
             {data.market && <span>📍 {data.market}</span>}
             {data.state && <span>🗺 {data.state}</span>}
           </div>
-          <div className="db-trend-label">{t.trendLabel}</div>
+          <div className="db-trend-label">{tFn("dash_trend_label")}</div>
           <ResponsiveContainer width="100%" height={90}>
             <AreaChart data={trendData}>
               <defs>
@@ -303,13 +146,13 @@ function MarketPanel({ crop, state, t }) {
         </>
       )}
       {!loading && !data?.price && (
-        <div className="db-muted-text">{t.noPrice} <b style={{color:"var(--leaf)"}}>{crop || "—"}</b></div>
+        <div className="db-muted-text">{tFn("dash_no_price")} <b style={{color:"var(--leaf)"}}>{crop || "—"}</b></div>
       )}
     </div>
   );
 }
 
-function ProfileCard({ profile, index, isLatest, t }) {
+function ProfileCard({ profile, index, isLatest, tFn }) {
   const name = profile.name || "—";
   const location = profile.location || "—";
   const crop = profile.crop || "—";
@@ -318,16 +161,16 @@ function ProfileCard({ profile, index, isLatest, t }) {
   const irrigationType = profile.irrigationType || profile.irrigationtype || "N/A";
 
   const fields = [
-    ["📍", t.tableHeaders[2], location],
-    ["🌱", t.cropLabel, crop],
-    ["🌾", t.landLabel, landSize !== "—" ? `${landSize} ${t.acresSuffix.trim()}` : "—"],
-    ["🪨", t.soilLabel, soilType],
-    ["💧", t.waterLabel, irrigationType],
+    ["📍", tFn("dash_th_location"), location],
+    ["🌱", tFn("dash_crop_label"), crop],
+    ["🌾", tFn("dash_land_label"), landSize !== "—" ? `${landSize} ${tFn("dash_acres_suffix").trim()}` : "—"],
+    ["🪨", tFn("dash_soil_label"), soilType],
+    ["💧", tFn("dash_water_label"), irrigationType],
   ];
 
   return (
     <div className={`db-profile-card ${isLatest ? "latest" : ""}`} style={{animationDelay:`${index*0.08}s`}}>
-      {isLatest && <div className="db-profile-badge">{t.latestBadge}</div>}
+      {isLatest && <div className="db-profile-badge">{tFn("dash_latest_badge")}</div>}
       <div className="db-profile-num">#{String(index + 1).padStart(2, "0")}</div>
       <div className="db-profile-name">{name}</div>
       <div className="db-profile-rows">
@@ -392,8 +235,16 @@ function SoilBreakdown({ profiles }) {
 }
 
 export default function Dashboard() {
-  const { lang } = useLanguage();
-  const t = TEXT[lang] || TEXT.en;
+  const { t, lang } = useLanguage();
+
+  // Build array-based translations
+  const tableHeaders = [
+    t("dash_th_num"), t("dash_th_name"), t("dash_th_location"),
+    t("dash_th_crop"), t("dash_th_land"), t("dash_th_soil"), t("dash_th_irrigation")
+  ];
+  const pillLabels = [
+    t("dash_pill_1"), t("dash_pill_2"), t("dash_pill_3"), t("dash_pill_4")
+  ];
 
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -426,8 +277,8 @@ export default function Dashboard() {
         <style>{CSS}</style>
         <div className="db-locked">
           <div className="db-locked-ic">🔒</div>
-          <h2 className="db-locked-t">{t.locked}</h2>
-          <p className="db-locked-s">{t.lockedSub}</p>
+          <h2 className="db-locked-t">{t("dash_locked")}</h2>
+          <p className="db-locked-s">{t("dash_locked_sub")}</p>
         </div>
       </>
     );
@@ -442,7 +293,7 @@ export default function Dashboard() {
 
   const pills = [
     { ic:"📋", val: profiles.length, color:"#4caf65" },
-    { ic:"🌾", val: `${totalAcres.toFixed(1)}${t.acresSuffix}`, color:"#c47f1a", raw:true },
+    { ic:"🌾", val: `${totalAcres.toFixed(1)}${t("dash_acres_suffix")}`, color:"#c47f1a", raw:true },
     { ic:"🌱", val: uniqueCrops.length, color:"#60a5fa" },
     { ic:"🪨", val: uniqueSoils.length, color:"#a78bfa" },
   ];
@@ -454,24 +305,24 @@ export default function Dashboard() {
         <div className="db-topbar">
           <div className="db-topbar-inner">
             <div>
-              <div className="db-topbar-eye">{t.welcome}</div>
+              <div className="db-topbar-eye">{t("dash_welcome")}</div>
               <h1 className="db-topbar-title">{farmerName}'s Dashboard</h1>
               {farmerLocation && <div className="db-topbar-sub">📍 {farmerLocation}</div>}
             </div>
             <div className="db-topbar-stats">
               <div className="db-tstat">
                 <div className="db-tstat-v"><AnimNum value={profiles.length} /></div>
-                <div className="db-tstat-l">{t.profiles}</div>
+                <div className="db-tstat-l">{t("dash_profiles")}</div>
               </div>
               <div className="db-tstat-div"/>
               <div className="db-tstat">
-                <div className="db-tstat-v"><AnimNum value={totalAcres} suffix={t.acresSuffix} decimals={1} /></div>
-                <div className="db-tstat-l">{t.totalLand}</div>
+                <div className="db-tstat-v"><AnimNum value={totalAcres} suffix={t("dash_acres_suffix")} decimals={1} /></div>
+                <div className="db-tstat-l">{t("dash_total_land")}</div>
               </div>
               <div className="db-tstat-div"/>
               <div className="db-tstat">
                 <div className="db-tstat-v"><AnimNum value={uniqueCrops.length} /></div>
-                <div className="db-tstat-l">{t.crops}</div>
+                <div className="db-tstat-l">{t("dash_crops")}</div>
               </div>
             </div>
           </div>
@@ -481,7 +332,7 @@ export default function Dashboard() {
           <div className="db-tabs">
             {["overview", "profiles", "analytics"].map((tab, i) => (
               <button key={tab} className={`db-tab ${activeTab === tab ? "active" : ""}`} onClick={() => setActiveTab(tab)}>
-                {[t.tabOverview, t.tabProfiles, t.tabAnalytics][i]}
+                {[t("dash_tab_overview"), t("dash_tab_profiles"), t("dash_tab_analytics")][i]}
               </button>
             ))}
           </div>
@@ -491,7 +342,7 @@ export default function Dashboard() {
           {loading && (
             <div className="db-loading-full">
               <div className="db-spinner"/>
-              <span>{t.loading}</span>
+              <span>{t("dash_loading")}</span>
             </div>
           )}
 
@@ -504,15 +355,15 @@ export default function Dashboard() {
                     <div className="db-hero-img-overlay"/>
                   </div>
                   <div className="db-hero-center">
-                    <div className="db-hero-badge">{t.latestBadge}</div>
+                    <div className="db-hero-badge">{t("dash_latest_badge")}</div>
                     <div className="db-hero-name">{latest.name}</div>
                     <div className="db-hero-loc">📍 {latest.location}</div>
                     <div className="db-hero-fields">
                       {[
-                        ["🌱", t.cropLabel, latest.crop],
-                        ["🌾", t.landLabel, `${latest.landSize ?? latest.landsize ?? "—"}${t.acresSuffix}`],
-                        ["🪨", t.soilLabel, latest.soilType || latest.soiltype || "N/A"],
-                        ["💧", t.waterLabel, latest.irrigationType || latest.irrigationtype || "N/A"],
+                        ["🌱", t("dash_crop_label"), latest.crop],
+                        ["🌾", t("dash_land_label"), `${latest.landSize ?? latest.landsize ?? "—"}${t("dash_acres_suffix")}`],
+                        ["🪨", t("dash_soil_label"), latest.soilType || latest.soiltype || "N/A"],
+                        ["💧", t("dash_water_label"), latest.irrigationType || latest.irrigationtype || "N/A"],
                       ].map(([ic, lb, val]) => (
                         <div key={lb} className="db-hero-field">
                           <span className="db-hero-field-ic">{ic}</span>
@@ -537,39 +388,39 @@ export default function Dashboard() {
                     <div className="db-pill-ic" style={{background:`${color}18`,color}}>{ic}</div>
                     <div>
                       <div className="db-pill-v" style={{color}}>{raw ? val : <AnimNum value={val}/>}</div>
-                      <div className="db-pill-l">{t.pillLabels[i]}</div>
+                      <div className="db-pill-l">{pillLabels[i]}</div>
                     </div>
                   </div>
                 ))}
               </div>
 
               <div className="db-two-col">
-                <WeatherPanel city={latest?.location || "Delhi"} t={t} />
-                <MarketPanel crop={latest?.crop} state={latest?.location} t={t} />
+                <WeatherPanel city={latest?.location || "Delhi"} tFn={t} />
+                <MarketPanel crop={latest?.crop} state={latest?.location} tFn={t} />
               </div>
 
               {profiles.length > 1 && (
                 <div className="db-two-col">
                   <div className="db-card">
-                    <div className="db-card-tag">{t.landTag}</div>
-                    <div className="db-card-title">{t.landTitle}</div>
+                    <div className="db-card-tag">{t("dash_land_tag")}</div>
+                    <div className="db-card-title">{t("dash_land_title")}</div>
                     <LandTrendChart profiles={profiles} />
                   </div>
                   <div className="db-card">
-                    <div className="db-card-tag">{t.soilTag}</div>
-                    <div className="db-card-title">{t.soilTitle}</div>
+                    <div className="db-card-tag">{t("dash_soil_tag")}</div>
+                    <div className="db-card-title">{t("dash_soil_title")}</div>
                     <SoilBreakdown profiles={profiles} />
                   </div>
                 </div>
               )}
 
               <div className="db-card">
-                <div className="db-card-tag">{t.profileHistTag}</div>
-                <div className="db-card-title">{t.profileHistTitle}</div>
+                <div className="db-card-tag">{t("dash_profile_hist_tag")}</div>
+                <div className="db-card-title">{t("dash_profile_hist_title")}</div>
                 <div className="db-table-wrap">
                   <table className="db-table">
                     <thead>
-                      <tr>{t.tableHeaders.map(h => <th key={h}>{h}</th>)}</tr>
+                      <tr>{tableHeaders.map(h => <th key={h}>{h}</th>)}</tr>
                     </thead>
                     <tbody>
                       {profiles.map((p, i) => (
@@ -593,17 +444,17 @@ export default function Dashboard() {
           {!loading && activeTab === "profiles" && (
             <>
               <div className="db-section-hd">
-                <div className="db-card-tag">{t.profilesTag}</div>
-                <h2 className="db-section-title">{t.profilesTitle} ({profiles.length})</h2>
+                <div className="db-card-tag">{t("dash_profiles_tag")}</div>
+                <h2 className="db-section-title">{t("dash_profiles_title")} ({profiles.length})</h2>
               </div>
               <div className="db-profiles-grid">
                 {profiles.map((p, i) => (
-                  <ProfileCard key={p.id || i} profile={p} index={i} isLatest={i === 0} t={t} />
+                  <ProfileCard key={p.id || i} profile={p} index={i} isLatest={i === 0} tFn={t} />
                 ))}
                 {profiles.length === 0 && (
                   <div className="db-empty">
                     <div style={{fontSize:"3rem"}}>🌱</div>
-                    <div>{t.noProfiles} <a href="/onboarding" className="db-link">{t.addFirst}</a></div>
+                    <div>{t("dash_no_profiles")} <a href="/onboarding" className="db-link">{t("dash_add_first")}</a></div>
                   </div>
                 )}
               </div>
@@ -614,26 +465,26 @@ export default function Dashboard() {
             <>
               <div className="db-two-col">
                 <div className="db-card">
-                  <div className="db-card-tag">{t.analyticsLandTag}</div>
-                  <div className="db-card-title">{t.analyticsLandTitle}</div>
-                  {profiles.length > 0 ? <LandTrendChart profiles={profiles} /> : <div className="db-muted-text">{t.noData}</div>}
+                  <div className="db-card-tag">{t("dash_analytics_land_tag")}</div>
+                  <div className="db-card-title">{t("dash_analytics_land_title")}</div>
+                  {profiles.length > 0 ? <LandTrendChart profiles={profiles} /> : <div className="db-muted-text">{t("dash_no_data")}</div>}
                 </div>
                 <div className="db-card">
-                  <div className="db-card-tag">{t.analyticsSoilTag}</div>
-                  <div className="db-card-title">{t.analyticsSoilTitle}</div>
+                  <div className="db-card-tag">{t("dash_analytics_soil_tag")}</div>
+                  <div className="db-card-title">{t("dash_analytics_soil_title")}</div>
                   <SoilBreakdown profiles={profiles} />
                 </div>
               </div>
               <div className="db-card">
-                <div className="db-card-tag">{t.analyticsCropTag}</div>
-                <div className="db-card-title">{t.analyticsCropTitle}</div>
+                <div className="db-card-tag">{t("dash_analytics_crop_tag")}</div>
+                <div className="db-card-title">{t("dash_analytics_crop_title")}</div>
                 <div className="db-crop-tags">
                   {uniqueCrops.map((c, i) => (
                     <span key={c} className="db-crop-tag" style={{borderColor:CROP_COLORS[i%CROP_COLORS.length],color:CROP_COLORS[i%CROP_COLORS.length]}}>
                       🌱 {c}
                     </span>
                   ))}
-                  {uniqueCrops.length === 0 && <div className="db-muted-text">{t.noCrop}</div>}
+                  {uniqueCrops.length === 0 && <div className="db-muted-text">{t("dash_no_crop")}</div>}
                 </div>
               </div>
             </>

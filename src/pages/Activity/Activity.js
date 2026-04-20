@@ -1,59 +1,52 @@
-import React, { useState, useEffect } from "react";
-import { useLanguage } from "../../context/LanguageContext";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useLanguage, translateText } from "../../context/LanguageContext";
 import "./Activity.css";
 
-const TEXT = {
-  en: {
-    title: "Log Today's Work",
-    placeholder: "e.g. Sowed paddy in north field",
-    speakBtn: "🎤 Speak",
-    addBtn: "Add Entry",
-    clearBtn: "Clear All",
-    diaryTitle: "My Activity Diary",
-    empty: "No work logged yet. Add your first entry above.",
-    recognitionLang: "en-IN",
-    confirmClear: "Clear all activity logs?",
-  },
-  hi: {
-    title: "आज का काम दर्ज करें",
-    placeholder: "जैसे: उत्तरी खेत में धान बोया",
-    speakBtn: "🎤 बोलें",
-    addBtn: "दर्ज करें",
-    clearBtn: "सब मिटाएं",
-    diaryTitle: "मेरी गतिविधि डायरी",
-    empty: "अभी तक कोई काम दर्ज नहीं हुआ।",
-    recognitionLang: "hi-IN",
-    confirmClear: "सभी गतिविधियां मिटा दें?",
-  },
-  ml: {
-    title: "ഇന്നത്തെ പ്രവർത്തി രേഖപ്പെടുത്തുക",
-    placeholder: "ഉദാ: വടക്കേ പാടത്ത് നെൽ വിതച്ചു",
-    speakBtn: "🎤 സംസാരിക്കുക",
-    addBtn: "ചേർക്കുക",
-    clearBtn: "മായ്ക്കുക",
-    diaryTitle: "എന്റെ പ്രവർത്തി ഡയറി",
-    empty: "ഇപ്പോഴും ഒന്നും ചേർത്തിട്ടില്ല. മുകളിൽ ആദ്യ എൻട്രി ചേർക്കൂ.",
-    recognitionLang: "ml-IN",
-    confirmClear: "എല്ലാ എൻട്രികളും മായ്ക്കണോ?",
-  },
+const RECOGNITION_LANG = {
+  en: "en-IN", hi: "hi-IN", ml: "ml-IN", te: "te-IN",
+  ta: "ta-IN", kn: "kn-IN", mr: "mr-IN", gu: "gu-IN",
+  pa: "pa-IN", bn: "bn-IN", ur: "ur-PK", or: "or-IN",
+  as: "as-IN", sa: "sa-IN",
 };
 
 function Activity() {
-  const { lang } = useLanguage();
-  const t = TEXT[lang] || TEXT.en;
+  const { t, lang } = useLanguage();
+  const [activity, setActivity]     = useState("");
+  const [logs, setLogs]             = useState([]);
+  const [listening, setListening]   = useState(false);
+  const [translating, setTranslating] = useState(false);
 
-  const [activity, setActivity] = useState("");
-  const [logs, setLogs] = useState([]);
-  const [listening, setListening] = useState(false);
+  const debounceRef   = useRef(null);
+  const latestLang    = useRef(lang);
+  const recognitionRef = useRef(null);
 
-  // Load logs from localStorage on mount
+  useEffect(() => { latestLang.current = lang; }, [lang]);
+
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("activityLogs")) || [];
     setLogs(stored);
   }, []);
 
-  // Save new log
-  const handleAdd = () => {
+  // Real-time translation as user types
+  const handleActivityChange = useCallback((e) => {
+    const raw = e.target.value;
+    setActivity(raw);
+
+    if (!raw.trim() || latestLang.current === "en") return;
+
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      setTranslating(true);
+      try {
+        const translated = await translateText(raw, latestLang.current);
+        if (translated && translated !== raw) setActivity(translated);
+      } finally {
+        setTranslating(false);
+      }
+    }, 700);
+  }, []);
+
+  const handleAdd = useCallback(() => {
     const trimmed = activity.trim();
     if (!trimmed) return;
     const newLog = {
@@ -61,90 +54,119 @@ function Activity() {
       date: new Date().toLocaleDateString(),
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
-    const updatedLogs = [newLog, ...logs];
-    setLogs(updatedLogs);
-    localStorage.setItem("activityLogs", JSON.stringify(updatedLogs));
+    const updated = [newLog, ...logs];
+    setLogs(updated);
+    localStorage.setItem("activityLogs", JSON.stringify(updated));
     setActivity("");
-  };
+    clearTimeout(debounceRef.current);
+  }, [activity, logs]);
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") handleAdd();
-  };
-
-  // Clear all logs
-  const handleClear = () => {
-    if (!window.confirm(t.confirmClear)) return;
+  const handleClear = useCallback(() => {
+    if (!window.confirm(t("activity_confirm_clear"))) return;
     setLogs([]);
     localStorage.removeItem("activityLogs");
-  };
+  }, [t]);
 
-  // Voice input — uses app language automatically
-  const handleVoiceInput = () => {
-    if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
-      alert("Speech Recognition is not supported in this browser.");
+  const handleVoiceInput = useCallback(() => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert("Speech Recognition not supported in this browser."); return; }
+
+    if (recognitionRef.current) {
+      recognitionRef.current.abort();
+      recognitionRef.current = null;
+      setListening(false);
       return;
     }
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = t.recognitionLang;
+
+    const recognition = new SR();
+    recognitionRef.current = recognition;
+    recognition.lang = RECOGNITION_LANG[latestLang.current] || "en-IN";
     recognition.continuous = false;
     recognition.interimResults = false;
 
-    recognition.onstart = () => setListening(true);
-    recognition.onend = () => setListening(false);
-
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setActivity(transcript);
+    recognition.onstart  = () => setListening(true);
+    recognition.onend    = () => { setListening(false); recognitionRef.current = null; };
+    recognition.onresult = async (e) => {
+      const transcript = e.results[0][0].transcript;
+      if (latestLang.current !== "en") {
+        setTranslating(true);
+        try {
+          const translated = await translateText(transcript, latestLang.current);
+          setActivity(translated || transcript);
+        } finally {
+          setTranslating(false);
+        }
+      } else {
+        setActivity(transcript);
+      }
     };
-
-    recognition.onerror = (event) => {
+    recognition.onerror = (e) => {
       setListening(false);
-      alert("Mic error: " + event.error);
+      recognitionRef.current = null;
+      if (e.error !== "aborted") alert("Mic error: " + e.error);
     };
-
     recognition.start();
-  };
+  }, []);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleAdd();
+    }
+  }, [handleAdd]);
+
+  // Cleanup on unmount
+  useEffect(() => () => {
+    clearTimeout(debounceRef.current);
+    recognitionRef.current?.abort();
+  }, []);
 
   return (
     <div className="activity-container">
-      {/* Input Card */}
       <div className="activity-card">
-        <h2>{t.title}</h2>
-
+        <h2>{t("activity_title")}</h2>
         <div className="input-row">
-          <input
-            type="text"
-            placeholder={t.placeholder}
-            value={activity}
-            onChange={(e) => setActivity(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
+          <div style={{ position: "relative", flex: 1 }}>
+            <input
+              type="text"
+              placeholder={t("activity_placeholder")}
+              value={activity}
+              onChange={handleActivityChange}
+              onKeyDown={handleKeyDown}
+              style={{ width: "100%", paddingRight: translating ? "32px" : undefined }}
+            />
+            {translating && (
+              <span style={{
+                position: "absolute", right: 8, top: "50%",
+                transform: "translateY(-50%)",
+                fontSize: 12, color: "rgba(74,222,128,0.7)", animation: "spin 1s linear infinite",
+                display: "inline-block",
+              }}>⟳</span>
+            )}
+          </div>
           <button
             className={`speak-btn${listening ? " listening" : ""}`}
             onClick={handleVoiceInput}
-            title={t.speakBtn}
           >
-            {listening ? "🔴" : "🎤"} {t.speakBtn.replace("🎤 ", "")}
+            {listening ? "🔴" : "🎤"} {t("activity_speak_btn")}
           </button>
           <button className="add-btn" onClick={handleAdd}>
-            ➕ {t.addBtn}
+            ➕ {t("activity_add_btn")}
           </button>
           <button className="clear-btn" onClick={handleClear}>
-            🗑️ {t.clearBtn}
+            🗑️ {t("activity_clear_btn")}
           </button>
         </div>
       </div>
 
-      {/* Logs Section */}
       <div className="logs-section">
-        <h3>📅 {t.diaryTitle}</h3>
+        <h3>📅 {t("activity_diary_title")}</h3>
         {logs.length === 0 ? (
-          <p className="empty">{t.empty}</p>
+          <p className="empty">{t("activity_empty")}</p>
         ) : (
           <ul className="timeline">
-            {logs.map((log, index) => (
-              <li key={index}>
+            {logs.map((log, i) => (
+              <li key={i}>
                 <span className="date">{log.date}{log.time ? ` · ${log.time}` : ""}</span>
                 <span className="text">{log.text}</span>
               </li>
@@ -152,6 +174,10 @@ function Activity() {
           </ul>
         )}
       </div>
+
+      <style>{`
+        @keyframes spin { from { transform: translateY(-50%) rotate(0deg); } to { transform: translateY(-50%) rotate(360deg); } }
+      `}</style>
     </div>
   );
 }

@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useLanguage } from "../../context/LanguageContext";
 const soilVideo = "https://res.cloudinary.com/dnqwvrwyw/video/upload/v1776486748/Soil_health_card_jnst9g.mp4";
+
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
 const CROPS = [
@@ -80,154 +81,268 @@ const FIELDS = [
   },
 ];
 
-const LABELS = {
-  en: {
-    appName:"Krishi Sakhi", appSub:"Smart Soil Health Card",
-    step1:"Select Your Crop", step1sub:"Tap the crop you want to grow",
-    step2:"Enter Soil Values", step2sub:"From soil test report — or keep defaults",
-    step3:"AI Result", analyze:"Analyze with AI",
-    loading:"Analyzing your soil...",
-    listen:"Listen to Results", stop:"Stop Speaking",
-    newTest:"Start New Test",
-    why:"Why this crop?", fert:"Fertilizer Suggestion",
-    soilHealth:"Soil Health", overall:"Overall",
-    confidence:"AI Confidence", also:"Also suitable for",
-    infoTitle:"What you entered",
-    videoTitle:"Watch: How it Works",
-    videoSub:"Learn before you begin — 2 min guide",
-    videoBadge:"VIDEO GUIDE",
-    videoTip:"Tap to watch how to use Krishi Sakhi",
-    videoClose:"Close Video",
-  },
-  ml: {
-    appName:"കൃഷി സഖി", appSub:"സ്മാർട്ട് മണ്ണ് ആരോഗ്യ കാർഡ്",
-    step1:"വിള തിരഞ്ഞെടുക്കുക", step1sub:"ഏത് വിള കൃഷി ചെയ്യണം?",
-    step2:"മണ്ണ് മൂല്യങ്ങൾ നൽകുക", step2sub:"Soil test report-ൽ നിന്ന് — അല്ലെങ്കിൽ default ഉപയോഗിക്കുക",
-    step3:"AI ഫലം", analyze:"AI ഉപയോഗിച്ച് വിശകലനം ചെയ്യുക",
-    loading:"മണ്ണ് വിശകലനം ചെയ്യുന്നു...",
-    listen:"ഫലം ഉറക്കെ കേൾക്കുക", stop:"നിർത്തുക",
-    newTest:"പുതിയ പരിശോധന",
-    why:"ഈ വിള എന്തുകൊണ്ട്?", fert:"വളം നിർദ്ദേശം",
-    soilHealth:"മണ്ണ് ആരോഗ്യം", overall:"മൊത്തം",
-    confidence:"AI ആത്മവിശ്വാസം", also:"ഇവയ്ക്കും യോജ്യം",
-    infoTitle:"നൽകിയ വിവരങ്ങൾ",
-    videoTitle:"കാണുക: എങ്ങനെ ഉപയോഗിക്കാം",
-    videoSub:"തുടങ്ങുന്നതിന് മുമ്പ് കാണുക — 2 മിനിറ്റ്",
-    videoBadge:"വീഡിയോ ഗൈഡ്",
-    videoTip:"കൃഷി സഖി എങ്ങനെ ഉപയോഗിക്കാം എന്ന് കാണാൻ ടാപ്പ് ചെയ്യുക",
-    videoClose:"അടയ്ക്കുക",
-  },
-  hi: {
-    appName:"कृषि सखी", appSub:"स्मार्ट मिट्टी स्वास्थ्य कार्ड",
-    step1:"अपनी फसल चुनें", step1sub:"आप कौन सी फसल उगाना चाहते हैं?",
-    step2:"मिट्टी की जानकारी भरें", step2sub:"Soil test report से — या default रखें",
-    step3:"AI सुझाव", analyze:"AI से जाँच करें",
-    loading:"मिट्टी का विश्लेषण हो रहा है...",
-    listen:"परिणाम सुनें", stop:"बंद करें",
-    newTest:"नई जाँच",
-    why:"यह फसल क्यों?", fert:"खाद सुझाव",
-    soilHealth:"मिट्टी स्वास्थ्य", overall:"कुल",
-    confidence:"AI भरोसा", also:"ये भी उग सकते हैं",
-    infoTitle:"आपने जो भरा",
-    videoTitle:"देखें: कैसे करें उपयोग",
-    videoSub:"शुरू करने से पहले देखें — 2 मिनट",
-    videoBadge:"वीडियो गाइड",
-    videoTip:"कृषि सखी कैसे इस्तेमाल करें — टैप करें",
-    videoClose:"बंद करें",
-  },
-};
-
 const HEALTH_STYLE = {
-  Good:   { bg:"#f0fff4", color:"#166534", label:"Good ✅"   },
-  Medium: { bg:"#fffbeb", color:"#92400e", label:"Medium ⚠️" },
-  Poor:   { bg:"#fff1f2", color:"#9f1239", label:"Poor 🔴"   },
+  Good:   { bg:"#f0fff4", color:"#166534", label:"Good ✅",   bar:"#22c55e" },
+  Medium: { bg:"#fffbeb", color:"#92400e", label:"Medium ⚠️", bar:"#f59e0b" },
+  Poor:   { bg:"#fff1f2", color:"#9f1239", label:"Poor 🔴",   bar:"#ef4444" },
 };
 
-function buildSpeechText(lang, crop, result) {
-  if (!result) return "";
-  const c = result.recommended_crop;
-  const conf = result.confidence;
-  const health = result.soil_health?.overall;
-  const fert = result.fertilizer_tip;
-  const expl = result.explanation;
-  const texts = {
-    ml: `AI ഫലം. ${c} കൃഷിക്ക് ഏറ്റവും അനുയോജ്യം. AI ആത്മവിശ്വാസം ${Math.round(conf)} ശതമാനം. മണ്ണ് ആരോഗ്യം ${health === "Good" ? "നല്ലതാണ്" : health === "Medium" ? "ശരാശരിയാണ്" : "ദയനീയമാണ്"}. ${expl}. വളം നിർദ്ദേശം: ${fert}`,
-    hi: `AI सिफारिश। ${c} की खेती सबसे उपयुक्त है। AI का भरोसा ${Math.round(conf)} प्रतिशत है। मिट्टी की सेहत ${health === "Good" ? "अच्छी है" : health === "Medium" ? "ठीक है" : "खराब है"}। ${expl}। खाद की सलाह: ${fert}`,
-    en: `AI recommendation. ${c} is most suitable. AI confidence ${Math.round(conf)} percent. Soil health is ${health}. ${expl}. Fertilizer suggestion: ${fert}`,
-  };
-  return texts[lang] || texts.en;
+// ─── ANIMATED COUNTER ─────────────────────────────────────────────────────────
+function AnimatedNumber({ target, duration = 1200 }) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { setVal(target); clearInterval(timer); }
+      else setVal(Math.round(start));
+    }, 16);
+    return () => clearInterval(timer);
+  }, [target]);
+  return <span>{val}</span>;
+}
+
+// ─── HEALTH BAR ───────────────────────────────────────────────────────────────
+function HealthBar({ status, delay = 0 }) {
+  const [width, setWidth] = useState(0);
+  const hs = HEALTH_STYLE[status] || HEALTH_STYLE.Good;
+  const pct = status === "Good" ? 90 : status === "Medium" ? 55 : 25;
+  useEffect(() => {
+    const t = setTimeout(() => setWidth(pct), delay + 100);
+    return () => clearTimeout(t);
+  }, [pct, delay]);
+  return (
+    <div style={{ background:"#e2e8f0", borderRadius:6, height:6, overflow:"hidden", marginTop:6 }}>
+      <div style={{
+        height:"100%", borderRadius:6, background:hs.bar,
+        width:`${width}%`, transition:"width 1s cubic-bezier(.4,0,.2,1)"
+      }}/>
+    </div>
+  );
+}
+
+// ─── FLOATING PARTICLE ────────────────────────────────────────────────────────
+function Particles() {
+  const particles = ["🌱","🍀","✨","🌿","💧","☀️"];
+  return (
+    <div style={{ position:"fixed", top:0, left:0, width:"100%", height:"100%", pointerEvents:"none", zIndex:0, overflow:"hidden" }}>
+      {particles.map((p, i) => (
+        <div key={i} style={{
+          position:"absolute",
+          left:`${15 + i * 15}%`,
+          fontSize: i % 2 === 0 ? 16 : 12,
+          opacity: 0.08,
+          animation: `shc2float ${4 + i}s ease-in-out infinite`,
+          animationDelay: `${i * 0.7}s`,
+          top: `${10 + i * 12}%`,
+        }}>{p}</div>
+      ))}
+    </div>
+  );
 }
 
 // ─── VIDEO GUIDE CARD ─────────────────────────────────────────────────────────
-function VideoGuideCard({ lang, t }) {
+function VideoGuideCard() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const videoRef = useRef(null);
-
   const handleToggle = () => {
-    if (open) {
-      videoRef.current?.pause();
-    }
+    if (open) { videoRef.current?.pause(); }
     setOpen(v => !v);
   };
-
   return (
     <div className="shc2-video-card">
-      {/* Thumbnail / Banner row — always visible */}
       <div className="shc2-video-banner" onClick={handleToggle}>
-        {/* Left: animated play icon area */}
         <div className="shc2-video-play-wrap">
           <div className={`shc2-video-play-ring ${open ? "open" : ""}`}>
             <span className="shc2-video-play-icon">{open ? "⏸" : "▶"}</span>
           </div>
         </div>
-
-        {/* Middle: text */}
         <div className="shc2-video-banner-text">
-          <div className="shc2-video-badge">{t.videoBadge}</div>
-          <div className="shc2-video-title">{t.videoTitle}</div>
-          <div className="shc2-video-sub">{t.videoSub}</div>
+          <div className="shc2-video-badge">{t("soil_video_badge")}</div>
+          <div className="shc2-video-title">{t("soil_video_title")}</div>
+          <div className="shc2-video-sub">{t("soil_video_sub")}</div>
         </div>
-
-        {/* Right: chevron */}
         <div className={`shc2-video-chev ${open ? "open" : ""}`}>›</div>
       </div>
-
-      {/* Expandable video */}
       <div className={`shc2-video-body ${open ? "open" : ""}`}>
         <div className="shc2-video-player-wrap">
-          <video
-            ref={videoRef}
-            src={soilVideo}
-            controls
-            preload="metadata"
-            className="shc2-video-player"
-          />
+          <video ref={videoRef} src={soilVideo} controls preload="metadata" className="shc2-video-player" />
         </div>
         <div className="shc2-video-footer">
           <span className="shc2-video-footer-dot" />
-          <span className="shc2-video-footer-txt">{t.videoTip}</span>
-          <button className="shc2-video-close-btn" onClick={handleToggle}>
-            {t.videoClose} ✕
-          </button>
+          <span className="shc2-video-footer-txt">{t("soil_video_tip")}</span>
+          <button className="shc2-video-close-btn" onClick={handleToggle}>{t("soil_video_close")} ✕</button>
         </div>
       </div>
     </div>
   );
 }
 
+// ─── LOADING SCREEN ───────────────────────────────────────────────────────────
+function LoadingScreen({ lang }) {
+  const msgs = {
+    ml: ["🔬 AI വിശകലനം ചെയ്യുന്നു...", "🌱 മണ്ണ് മനസ്സിലാക്കുന്നു...", "📊 ഫലം തയ്യാറാക്കുന്നു..."],
+    hi: ["🔬 AI विश्लेषण हो रहा है...", "🌱 मिट्टी समझ रहे हैं...", "📊 परिणाम तैयार हो रहा है..."],
+    en: ["🔬 AI is analyzing...", "🌱 Understanding your soil...", "📊 Preparing results..."],
+  };
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setIdx(i => (i + 1) % 3), 900);
+    return () => clearInterval(t);
+  }, []);
+  const list = msgs[lang] || msgs.en;
+  return (
+    <div className="shc2-loading-screen">
+      <div className="shc2-loading-orb">
+        <div className="shc2-loading-ring r1"/>
+        <div className="shc2-loading-ring r2"/>
+        <div className="shc2-loading-ring r3"/>
+        <span className="shc2-loading-icon">🌱</span>
+      </div>
+      <div className="shc2-loading-msg">{list[idx]}</div>
+      <div className="shc2-loading-dots">
+        <span/><span/><span/>
+      </div>
+    </div>
+  );
+}
+
+// ─── RESULT CARD ──────────────────────────────────────────────────────────────
+function ResultCard({ result, values, lang, t, onReset }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const tm = setTimeout(() => setVisible(true), 80);
+    return () => clearTimeout(tm);
+  }, []);
+
+  const healthStyle = (s) => HEALTH_STYLE[s] || HEALTH_STYLE.Good;
+
+  return (
+    <div className={`shc2-result-wrapper ${visible ? "in" : ""}`}>
+
+      {/* ── HERO RESULT ── */}
+      <div className="shc2-hero-card">
+        <div className="shc2-hero-glow"/>
+        <div className="shc2-hero-top">
+          <div className="shc2-hero-badge">
+            {lang==="ml"?"✅ AI ശുപാർശ":lang==="hi"?"✅ AI सिफारिश":"✅ AI Recommendation"}
+          </div>
+        </div>
+        <div className="shc2-hero-body">
+          <div className="shc2-hero-icon-wrap">
+            <div className="shc2-hero-icon-ring">
+              <span className="shc2-hero-icon">{result.crop_icon}</span>
+            </div>
+          </div>
+          <div className="shc2-hero-info">
+            <div className="shc2-hero-crop">{result.recommended_crop}</div>
+            <div className="shc2-conf-row">
+              <span className="shc2-conf-label">{t("soil_confidence")}</span>
+              <span className="shc2-conf-val">
+                <AnimatedNumber target={Math.round(result.confidence)} />%
+              </span>
+            </div>
+            <div className="shc2-conf-track">
+              <div className="shc2-conf-fill" style={{ width:`${result.confidence}%` }}/>
+            </div>
+            {result.alternatives?.length > 0 && (
+              <div className="shc2-alt-row">
+                <span className="shc2-alt-label">{t("soil_also")}:</span>
+                {result.alternatives.map(a => (
+                  <span key={a} className="shc2-chip">
+                    {CROPS.find(c=>c.name.toLowerCase()===a)?.icon||"🌱"} {a}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── WHY THIS CROP ── */}
+      <div className="shc2-info-panel shc2-panel-amber shc2-anim-slide" style={{animationDelay:"0.1s"}}>
+        <div className="shc2-panel-icon">💡</div>
+        <div>
+          <div className="shc2-panel-title">{t("soil_why")}</div>
+          <div className="shc2-panel-body">{result.explanation}</div>
+        </div>
+      </div>
+
+      {/* ── FERTILIZER ── */}
+      <div className="shc2-info-panel shc2-panel-blue shc2-anim-slide" style={{animationDelay:"0.18s"}}>
+        <div className="shc2-panel-icon">🌿</div>
+        <div>
+          <div className="shc2-panel-title">{t("soil_fert")}</div>
+          <div className="shc2-panel-body">{result.fertilizer_tip}</div>
+        </div>
+      </div>
+
+      {/* ── SOIL HEALTH ── */}
+      <div className="shc2-card shc2-anim-slide" style={{animationDelay:"0.26s"}}>
+        <div className="shc2-card-title">📊 {t("soil_health")}</div>
+        <div className="shc2-health-list">
+          {[
+            { key:"overall",    icon:"🌍", label:t("soil_overall") },
+            { key:"ph",         icon:"🧪", label:"pH" },
+            { key:"nitrogen",   icon:"🌿", label:lang==="ml"?"നൈട്രജൻ":lang==="hi"?"नाइट्रोजन":"Nitrogen" },
+            { key:"phosphorus", icon:"🌱", label:lang==="ml"?"ഫോസ്ഫറസ്":lang==="hi"?"फास्फोरस":"Phosphorus" },
+            { key:"potassium",  icon:"💪", label:lang==="ml"?"പൊട്ടാഷ്":lang==="hi"?"पोटाश":"Potassium" },
+          ].map((item, i) => {
+            const s = result.soil_health?.[item.key];
+            const hs = healthStyle(s);
+            return (
+              <div key={item.key} className="shc2-health-row" style={{ background: hs.bg }}>
+                <span className="shc2-health-row-icon">{item.icon}</span>
+                <div style={{ flex:1 }}>
+                  <div className="shc2-health-row-label" style={{ color: hs.color }}>{item.label}</div>
+                  <HealthBar status={s} delay={i * 120} />
+                </div>
+                <span className="shc2-health-status" style={{ color: hs.color, background: hs.bg }}>{s}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── INPUT SUMMARY ── */}
+      <div className="shc2-card shc2-anim-slide" style={{animationDelay:"0.34s"}}>
+        <div className="shc2-card-title">📋 {t("soil_info_title")}</div>
+        <div className="shc2-info-grid">
+          {FIELDS.map(f => {
+            const lf = f[lang] || f.en;
+            const v = values[f.key];
+            const displayVal = f.step < 1 ? Number(v).toFixed(1) : Math.round(v);
+            return (
+              <div key={f.key} className="shc2-info-cell">
+                <div className="shc2-info-key">{lf.label}</div>
+                <div className="shc2-info-val">{displayVal}<span style={{fontSize:10,color:"#9ca3af",marginLeft:2}}>{lf.unit}</span></div>
+                <div className="shc2-info-desc">{lf.hint}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <button className="shc2-btn-reset shc2-anim-slide" style={{animationDelay:"0.42s"}} onClick={onReset}>
+        🔄 {t("soil_new_test")}
+      </button>
+    </div>
+  );
+}
+
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function SoilHealthCardAI() {
-const { lang } = useLanguage();
+  const { t, lang } = useLanguage();
+
   const [step, setStep]       = useState(1);
   const [crop, setCrop]       = useState(null);
   const [values, setValues]   = useState({});
   const [result, setResult]   = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
-  const [speaking, setSpeaking] = useState(false);
   const [openTip, setOpenTip] = useState(null);
-
-  const t = LABELS[lang];
 
   const handleCropSelect = (c) => {
     setCrop(c);
@@ -239,7 +354,7 @@ const { lang } = useLanguage();
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:8000/predict", {
+      const res = await fetch("https://soil-prediction-api-1.onrender.com/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...values }),
@@ -258,274 +373,360 @@ const { lang } = useLanguage();
     setLoading(false);
   };
 
-  const handleVoice = () => {
-    if (!window.speechSynthesis) return;
-    if (speaking) {
-      window.speechSynthesis.cancel();
-      setSpeaking(false);
-      return;
-    }
-    const text = buildSpeechText(lang, crop, result);
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang === "ml" ? "ml-IN" : lang === "hi" ? "hi-IN" : "en-IN";
-    u.rate = 0.82;
-    u.pitch = 1;
-    u.onstart = () => setSpeaking(true);
-    u.onend = () => setSpeaking(false);
-    u.onerror = () => setSpeaking(false);
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
+  const handleReset = () => {
+    setStep(1); setCrop(null); setResult(null); setError("");
+    window.scrollTo({ top:0, behavior:"smooth" });
   };
-
-  const healthStyle = (s) => HEALTH_STYLE[s] || HEALTH_STYLE.Good;
 
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+
         .shc2 * { box-sizing:border-box; margin:0; padding:0; }
-        .shc2 { font-family:'Noto Sans Malayalam','Noto Sans Devanagari','Segoe UI',sans-serif; background:#f4f1eb; min-height:100vh; color:#111; }
-        .shc2-bar { background:linear-gradient(135deg,#1a5c38,#2d8653); padding:14px 18px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+        .shc2 {
+          font-family:'Noto Sans Malayalam','Noto Sans Devanagari','Segoe UI',sans-serif;
+          background:#f4f1eb;
+          min-height:100vh;
+          color:#111;
+          position:relative;
+        }
+
+        /* ── TOP BAR ── */
+        .shc2-bar {
+          background:linear-gradient(135deg,#1a5c38,#2d8653);
+          padding:14px 18px;
+          display:flex; align-items:center; justify-content:space-between;
+          position:sticky; top:0; z-index:50;
+          box-shadow:0 4px 20px rgba(26,92,56,0.35);
+        }
         .shc2-logo { display:flex; align-items:center; gap:10px; }
-        .shc2-logo-icon { width:40px; height:40px; background:rgba(255,255,255,0.18); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; }
+        .shc2-logo-icon {
+          width:40px; height:40px;
+          background:rgba(255,255,255,0.18);
+          border-radius:12px;
+          display:flex; align-items:center; justify-content:center;
+          font-size:22px;
+          animation:shc2breathe 3s ease-in-out infinite;
+        }
+        @keyframes shc2breathe {
+          0%,100%{ transform:scale(1); }
+          50%{ transform:scale(1.08); }
+        }
         .shc2-logo-text { color:white; font-size:16px; font-weight:700; line-height:1.1; }
-        .shc2-logo-sub { color:rgba(255,255,255,0.7); font-size:11px; }
+        .shc2-logo-sub  { color:rgba(255,255,255,0.7); font-size:11px; }
         .shc2-langs { display:flex; gap:3px; background:rgba(0,0,0,0.2); padding:3px; border-radius:20px; }
         .shc2-lb { border:none; background:transparent; color:rgba(255,255,255,0.6); font-size:12px; font-weight:700; padding:5px 11px; border-radius:16px; cursor:pointer; font-family:inherit; transition:all .2s; }
         .shc2-lb.active { background:white; color:#1a5c38; }
-        .shc2-body { max-width:660px; margin:0 auto; padding:16px 14px 60px; }
+
+        /* ── BODY ── */
+        .shc2-body { max-width:660px; margin:0 auto; padding:16px 14px 60px; position:relative; z-index:1; }
+
+        /* ── STEP PILLS ── */
         .shc2-steps { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
-        .shc2-sp { font-size:12px; font-weight:700; padding:5px 14px; border-radius:20px; border:1.5px solid #e5e7eb; color:#9ca3af; background:white; }
-        .shc2-sp.done { background:#1a5c38; color:white; border-color:#1a5c38; }
-        .shc2-sp.active { background:#fef3c7; color:#92400e; border-color:#f59e0b; }
-        .shc2-card { background:white; border-radius:18px; padding:18px; margin-bottom:14px; border:1.5px solid #d4edda; }
+        .shc2-sp {
+          font-size:12px; font-weight:700;
+          padding:5px 14px; border-radius:20px;
+          border:1.5px solid #e5e7eb; color:#9ca3af; background:white;
+          transition:all .35s cubic-bezier(.4,0,.2,1);
+        }
+        .shc2-sp.done { background:#1a5c38; color:white; border-color:#1a5c38; transform:scale(1.04); }
+        .shc2-sp.active { background:#fef3c7; color:#92400e; border-color:#f59e0b; transform:scale(1.06); box-shadow:0 2px 12px rgba(245,158,11,0.25); }
+
+        /* ── CARDS ── */
+        .shc2-card {
+          background:white;
+          border-radius:18px; padding:18px;
+          margin-bottom:14px;
+          border:1.5px solid #d4edda;
+          box-shadow:0 2px 12px rgba(26,92,56,0.06);
+          transition:box-shadow .25s;
+        }
+        .shc2-card:hover { box-shadow:0 6px 24px rgba(26,92,56,0.11); }
         .shc2-card-title { font-size:16px; font-weight:700; color:#1a5c38; margin-bottom:3px; }
-        .shc2-card-sub { font-size:12px; color:#6b7280; margin-bottom:14px; }
+        .shc2-card-sub   { font-size:12px; color:#6b7280; margin-bottom:14px; }
+
+        /* ── CROP GRID ── */
         .shc2-crop-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
         @media(max-width:380px){ .shc2-crop-grid { grid-template-columns:repeat(2,1fr); } }
-        .shc2-cb { display:flex; flex-direction:column; align-items:center; gap:3px; padding:12px 6px; border-radius:12px; border:2px solid #e5e7eb; background:white; cursor:pointer; font-family:inherit; transition:all .2s; }
-        .shc2-cb.active { border-color:#1a5c38; background:#f0fff4; }
+        .shc2-cb {
+          display:flex; flex-direction:column; align-items:center; gap:3px;
+          padding:12px 6px; border-radius:12px;
+          border:2px solid #e5e7eb; background:white;
+          cursor:pointer; font-family:inherit;
+          transition:all .22s cubic-bezier(.4,0,.2,1);
+          position:relative; overflow:hidden;
+        }
+        .shc2-cb::after {
+          content:""; position:absolute; inset:0;
+          background:linear-gradient(135deg,rgba(26,92,56,0.04),transparent);
+          opacity:0; transition:opacity .2s;
+        }
+        .shc2-cb:hover { border-color:#2d8653; transform:translateY(-2px); box-shadow:0 4px 14px rgba(26,92,56,0.15); }
+        .shc2-cb:hover::after { opacity:1; }
+        .shc2-cb.active { border-color:#1a5c38; background:#f0fff4; box-shadow:0 4px 16px rgba(26,92,56,0.2); }
         .shc2-cb:active { transform:scale(0.93); }
-        .shc2-ci { font-size:26px; }
+        .shc2-ci { font-size:26px; transition:transform .2s; }
+        .shc2-cb:hover .shc2-ci { transform:scale(1.15) rotate(-3deg); }
+        .shc2-cb.active .shc2-ci { transform:scale(1.1); }
         .shc2-cn { font-size:11px; font-weight:700; color:#374151; margin-top:2px; }
         .shc2-cb.active .shc2-cn { color:#1a5c38; }
-        .shc2-field { margin-bottom:20px; }
+
+        /* ── FIELD / SLIDER ── */
+        .shc2-field { margin-bottom:22px; }
         .shc2-field-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:7px; }
         .shc2-flabel { font-size:15px; font-weight:700; display:flex; align-items:center; gap:7px; }
-        .shc2-fhint { font-size:11px; color:#9ca3af; margin-top:1px; }
-        .shc2-fval { font-size:22px; font-weight:800; color:#1a5c38; white-space:nowrap; }
-        .shc2-funit { font-size:11px; color:#9ca3af; margin-left:2px; font-weight:400; }
-        .shc2-tip-btn { width:18px; height:18px; border-radius:50%; background:#e5e7eb; border:none; cursor:pointer; font-size:10px; font-weight:700; color:#6b7280; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
-        .shc2-tip-box { background:#1f2937; color:#f0fdf4; font-size:13px; padding:11px 14px; border-radius:10px; margin-bottom:10px; line-height:1.55; }
-        input[type=range].shc2-slider { width:100%; height:8px; appearance:none; border-radius:8px; outline:none; cursor:pointer; }
-        input[type=range].shc2-slider::-webkit-slider-thumb { appearance:none; width:26px; height:26px; border-radius:50%; background:white; border:3px solid #1a5c38; box-shadow:0 2px 6px rgba(0,0,0,0.15); cursor:pointer; }
-        .shc2-voice-bar { display:flex; align-items:center; gap:12px; background:#f0fff4; border:1.5px solid #bbf7d0; border-radius:14px; padding:14px 16px; margin-bottom:14px; }
-        .shc2-vbtn { width:48px; height:48px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; font-size:22px; cursor:pointer; flex-shrink:0; transition:all .2s; }
-        .shc2-vbtn.play { background:#1a5c38; }
-        .shc2-vbtn.stop { background:#dc2626; }
-        .shc2-vtext { flex:1; }
-        .shc2-vlabel { font-size:14px; font-weight:700; color:#166534; }
-        .shc2-vsub { font-size:11px; color:#4ade80; margin-top:2px; }
-        .shc2-dots { display:flex; gap:3px; margin-top:4px; }
-        .shc2-dot { width:6px; height:6px; border-radius:50%; background:#1a5c38; animation:shc2bounce 1s infinite; }
-        .shc2-dot:nth-child(2){ animation-delay:.15s; }
-        .shc2-dot:nth-child(3){ animation-delay:.3s; }
-        @keyframes shc2bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
-        .shc2-result-hero { background:#f0fff4; border:2px solid #1a5c38; border-radius:18px; padding:20px; margin-bottom:12px; display:flex; gap:16px; align-items:center; }
-        .shc2-result-big-icon { font-size:58px; flex-shrink:0; }
-        .shc2-result-crop { font-size:26px; font-weight:800; color:#166534; text-transform:capitalize; }
-        .shc2-conf-bar-wrap { background:#e2e8f0; border-radius:8px; height:8px; margin:8px 0 3px; overflow:hidden; }
-        .shc2-conf-bar { height:100%; border-radius:8px; background:#1a5c38; transition:width 1.2s ease; }
-        .shc2-alt-chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
-        .shc2-chip { font-size:11px; font-weight:700; padding:3px 11px; border-radius:20px; background:#e8f5e9; color:#1a5c38; text-transform:capitalize; }
-        .shc2-health-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:12px; }
-        .shc2-hcell { padding:14px; border-radius:14px; text-align:center; }
-        .shc2-hcell-icon { font-size:22px; margin-bottom:4px; }
-        .shc2-hcell-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
-        .shc2-hcell-status { font-size:16px; font-weight:800; }
-        .shc2-explain { background:#fffbeb; border-radius:12px; padding:14px; border-left:4px solid #f59e0b; font-size:14px; color:#78350f; line-height:1.6; margin-bottom:12px; border-radius:0 12px 12px 0; }
-        .shc2-fert { background:#eff6ff; border-radius:12px; padding:14px; border-left:4px solid #2563eb; margin-bottom:12px; border-radius:0 12px 12px 0; }
-        .shc2-fert-title { font-size:14px; font-weight:700; color:#1d4ed8; margin-bottom:5px; }
-        .shc2-fert-body { font-size:14px; color:#1e3a8a; line-height:1.6; }
-        .shc2-info-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
-        .shc2-info-cell { background:#f9fafb; border-radius:10px; padding:10px; }
+        .shc2-fhint  { font-size:11px; color:#9ca3af; margin-top:1px; }
+        .shc2-fval   { font-size:24px; font-weight:800; color:#1a5c38; white-space:nowrap; transition:transform .15s; }
+        .shc2-funit  { font-size:11px; color:#9ca3af; margin-left:2px; font-weight:400; }
+        .shc2-tip-btn {
+          width:18px; height:18px; border-radius:50%;
+          background:#e5e7eb; border:none; cursor:pointer;
+          font-size:10px; font-weight:700; color:#6b7280;
+          display:inline-flex; align-items:center; justify-content:center;
+          flex-shrink:0; transition:all .2s;
+        }
+        .shc2-tip-btn:hover { background:#1a5c38; color:white; transform:scale(1.15); }
+        .shc2-tip-box {
+          background:#1f2937; color:#f0fdf4;
+          font-size:13px; padding:11px 14px;
+          border-radius:10px; margin-bottom:10px;
+          line-height:1.55;
+          animation:shc2tipIn .2s ease;
+        }
+        @keyframes shc2tipIn {
+          from{ opacity:0; transform:translateY(-4px); }
+          to{ opacity:1; transform:translateY(0); }
+        }
+        input[type=range].shc2-slider {
+          width:100%; height:8px; appearance:none;
+          border-radius:8px; outline:none; cursor:pointer;
+          transition:height .15s;
+        }
+        input[type=range].shc2-slider:hover { height:10px; }
+        input[type=range].shc2-slider::-webkit-slider-thumb {
+          appearance:none; width:26px; height:26px;
+          border-radius:50%; background:white;
+          border:3px solid #1a5c38;
+          box-shadow:0 2px 8px rgba(26,92,56,0.3);
+          cursor:pointer; transition:transform .15s, box-shadow .15s;
+        }
+        input[type=range].shc2-slider::-webkit-slider-thumb:hover {
+          transform:scale(1.2);
+          box-shadow:0 4px 16px rgba(26,92,56,0.4);
+        }
+
+        /* ── LOADING ── */
+        .shc2-loading-screen {
+          display:flex; flex-direction:column; align-items:center;
+          justify-content:center; padding:48px 20px;
+          gap:18px;
+        }
+        .shc2-loading-orb {
+          position:relative; width:90px; height:90px;
+          display:flex; align-items:center; justify-content:center;
+        }
+        .shc2-loading-ring {
+          position:absolute; border-radius:50%;
+          border:2px solid transparent;
+          border-top-color:#1a5c38;
+        }
+        .r1 { width:90px; height:90px; animation:shc2spin 1.2s linear infinite; }
+        .r2 { width:68px; height:68px; animation:shc2spin 1.8s linear infinite reverse; border-top-color:#2d8653; opacity:.6; }
+        .r3 { width:48px; height:48px; animation:shc2spin 2.4s linear infinite; border-top-color:#4ade80; opacity:.4; }
+        @keyframes shc2spin { to{ transform:rotate(360deg); } }
+        .shc2-loading-icon { font-size:28px; animation:shc2breathe 1.5s ease-in-out infinite; }
+        .shc2-loading-msg { font-size:15px; font-weight:600; color:#1a5c38; text-align:center; min-height:24px; }
+        .shc2-loading-dots { display:flex; gap:6px; }
+        .shc2-loading-dots span {
+          width:8px; height:8px; border-radius:50%; background:#1a5c38;
+          animation:shc2bounce 1s ease-in-out infinite;
+        }
+        .shc2-loading-dots span:nth-child(2){ animation-delay:.15s; opacity:.7; }
+        .shc2-loading-dots span:nth-child(3){ animation-delay:.3s; opacity:.4; }
+        @keyframes shc2bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+        /* ── BUTTONS ── */
+        .shc2-btn-primary {
+          width:100%; padding:16px;
+          border-radius:14px; border:none;
+          background:linear-gradient(135deg,#1a5c38,#2d8653);
+          color:white; font-size:17px; font-weight:700;
+          font-family:inherit; cursor:pointer;
+          display:flex; align-items:center; justify-content:center; gap:9px;
+          margin-top:16px;
+          transition:all .22s;
+          box-shadow:0 4px 16px rgba(26,92,56,0.3);
+          position:relative; overflow:hidden;
+        }
+        .shc2-btn-primary::after {
+          content:""; position:absolute; inset:0;
+          background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
+          opacity:0; transition:opacity .2s;
+        }
+        .shc2-btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(26,92,56,0.38); }
+        .shc2-btn-primary:hover::after { opacity:1; }
+        .shc2-btn-primary:active { transform:scale(0.97); }
+        .shc2-btn-primary:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+        .shc2-btn-reset {
+          width:100%; padding:13px;
+          border-radius:12px; border:1.5px solid #e5e7eb;
+          background:white; color:#6b7280;
+          font-size:14px; font-weight:700;
+          font-family:inherit; cursor:pointer;
+          margin-top:10px; transition:all .2s;
+        }
+        .shc2-btn-reset:hover { border-color:#1a5c38; color:#1a5c38; background:#f0fff4; }
+        .shc2-error {
+          padding:14px; background:#fff1f2;
+          border-radius:12px; color:#9f1239;
+          font-size:14px; font-weight:600;
+          margin-bottom:12px; text-align:center;
+          border:1.5px solid #fecdd3;
+          animation:shc2tipIn .25s ease;
+        }
+
+        /* ── VIDEO CARD ── */
+        .shc2-video-card { border-radius:18px; overflow:hidden; margin-bottom:14px; border:1.5px solid #a7f3d0; background:white; }
+        .shc2-video-banner { display:flex; align-items:center; gap:14px; padding:14px 16px; cursor:pointer; background:linear-gradient(135deg,#064e3b,#065f46,#047857); user-select:none; transition:opacity .15s; }
+        .shc2-video-banner:active { opacity:.88; }
+        .shc2-video-play-wrap { flex-shrink:0; }
+        .shc2-video-play-ring { width:46px; height:46px; border-radius:50%; border:2.5px solid rgba(255,255,255,0.5); display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.12); transition:all .25s; }
+        .shc2-video-play-ring.open { background:rgba(255,255,255,0.22); border-color:rgba(255,255,255,0.8); }
+        .shc2-video-play-icon { font-size:18px; color:white; margin-left:2px; }
+        .shc2-video-play-ring.open .shc2-video-play-icon { margin-left:0; }
+        .shc2-video-banner-text { flex:1; min-width:0; }
+        .shc2-video-badge { display:inline-block; background:rgba(255,255,255,0.18); color:rgba(255,255,255,0.9); font-size:9px; font-weight:800; letter-spacing:1.2px; padding:2px 8px; border-radius:20px; margin-bottom:5px; border:1px solid rgba(255,255,255,0.25); }
+        .shc2-video-title { color:white; font-size:15px; font-weight:700; line-height:1.2; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .shc2-video-sub { color:rgba(255,255,255,0.65); font-size:11px; }
+        .shc2-video-chev { color:rgba(255,255,255,0.7); font-size:26px; font-weight:300; flex-shrink:0; transition:transform .3s ease; line-height:1; }
+        .shc2-video-chev.open { transform:rotate(90deg); }
+        .shc2-video-body { max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.4,0,.2,1); }
+        .shc2-video-body.open { max-height:520px; }
+        .shc2-video-player-wrap { background:#000; line-height:0; }
+        .shc2-video-player { width:100%; max-height:280px; object-fit:contain; display:block; background:#000; }
+        .shc2-video-footer { display:flex; align-items:center; gap:8px; padding:10px 14px; background:#ecfdf5; border-top:1px solid #d1fae5; }
+        .shc2-video-footer-dot { width:7px; height:7px; border-radius:50%; background:#10b981; flex-shrink:0; animation:shc2pulse 1.8s infinite; }
+        @keyframes shc2pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.5; transform:scale(0.8); } }
+        .shc2-video-footer-txt { flex:1; font-size:12px; color:#065f46; font-weight:600; }
+        .shc2-video-close-btn { border:none; background:#d1fae5; color:#065f46; font-size:11px; font-weight:700; padding:5px 10px; border-radius:20px; cursor:pointer; font-family:inherit; flex-shrink:0; transition:background .2s; }
+        .shc2-video-close-btn:active { background:#a7f3d0; }
+
+        /* ── RESULT WRAPPER ── */
+        .shc2-result-wrapper { opacity:0; transform:translateY(16px); transition:all .45s cubic-bezier(.4,0,.2,1); }
+        .shc2-result-wrapper.in { opacity:1; transform:translateY(0); }
+
+        /* ── HERO CARD ── */
+        .shc2-hero-card {
+          background:linear-gradient(145deg,#1a5c38,#2d8653,#166534);
+          border-radius:20px; padding:20px;
+          margin-bottom:14px; position:relative; overflow:hidden;
+          box-shadow:0 8px 32px rgba(26,92,56,0.38);
+        }
+        .shc2-hero-glow {
+          position:absolute; top:-40px; right:-40px;
+          width:140px; height:140px; border-radius:50%;
+          background:rgba(255,255,255,0.08);
+          pointer-events:none;
+        }
+        .shc2-hero-top { margin-bottom:16px; }
+        .shc2-hero-badge {
+          display:inline-flex; align-items:center;
+          background:rgba(255,255,255,0.15);
+          border:1px solid rgba(255,255,255,0.25);
+          color:rgba(255,255,255,0.92);
+          font-size:11px; font-weight:700;
+          padding:4px 12px; border-radius:20px;
+          letter-spacing:.5px;
+        }
+        .shc2-hero-body { display:flex; gap:16px; align-items:center; }
+        .shc2-hero-icon-ring {
+          width:78px; height:78px; border-radius:50%;
+          background:rgba(255,255,255,0.14);
+          border:2px solid rgba(255,255,255,0.3);
+          display:flex; align-items:center; justify-content:center;
+          flex-shrink:0;
+          animation:shc2breathe 3s ease-in-out infinite;
+          box-shadow:0 0 0 6px rgba(255,255,255,0.05);
+        }
+        .shc2-hero-icon { font-size:40px; }
+        .shc2-hero-info { flex:1; }
+        .shc2-hero-crop { font-size:28px; font-weight:800; color:white; text-transform:capitalize; line-height:1.1; margin-bottom:6px; }
+        .shc2-conf-row { display:flex; justify-content:space-between; align-items:center; }
+        .shc2-conf-label { font-size:12px; color:rgba(255,255,255,0.7); }
+        .shc2-conf-val { font-size:20px; font-weight:800; color:#4ade80; }
+        .shc2-conf-track { background:rgba(255,255,255,0.2); border-radius:8px; height:8px; margin:6px 0 10px; overflow:hidden; }
+        .shc2-conf-fill { height:100%; background:linear-gradient(90deg,#4ade80,#86efac); border-radius:8px; transition:width 1.4s cubic-bezier(.4,0,.2,1); }
+        .shc2-alt-row { display:flex; align-items:center; flex-wrap:wrap; gap:5px; }
+        .shc2-alt-label { font-size:11px; color:rgba(255,255,255,0.6); margin-right:2px; }
+        .shc2-chip { font-size:11px; font-weight:700; padding:3px 11px; border-radius:20px; background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.88); }
+
+        /* ── INFO PANELS ── */
+        .shc2-info-panel {
+          display:flex; gap:12px; align-items:flex-start;
+          border-radius:0 14px 14px 0; padding:14px 16px;
+          margin-bottom:12px;
+        }
+        .shc2-panel-amber { background:#fffbeb; border-left:4px solid #f59e0b; }
+        .shc2-panel-blue  { background:#eff6ff; border-left:4px solid #2563eb; }
+        .shc2-panel-icon { font-size:22px; flex-shrink:0; margin-top:1px; }
+        .shc2-panel-title { font-size:14px; font-weight:700; color:#78350f; margin-bottom:4px; }
+        .shc2-panel-blue .shc2-panel-title { color:#1d4ed8; }
+        .shc2-panel-body { font-size:14px; color:#78350f; line-height:1.6; }
+        .shc2-panel-blue .shc2-panel-body { color:#1e3a8a; }
+
+        /* ── HEALTH LIST ── */
+        .shc2-health-list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+        .shc2-health-row {
+          display:flex; align-items:center; gap:10px;
+          padding:10px 14px; border-radius:12px;
+          transition:transform .2s;
+        }
+        .shc2-health-row:hover { transform:translateX(4px); }
+        .shc2-health-row-icon { font-size:20px; flex-shrink:0; }
+        .shc2-health-row-label { font-size:13px; font-weight:700; }
+        .shc2-health-status { font-size:12px; font-weight:700; padding:3px 10px; border-radius:20px; flex-shrink:0; border:1px solid currentColor; }
+
+        /* ── INFO GRID ── */
+        .shc2-info-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:12px; }
+        .shc2-info-cell { background:#f9fafb; border-radius:10px; padding:10px; transition:background .2s; }
+        .shc2-info-cell:hover { background:#f0fff4; }
         .shc2-info-key { font-size:10px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:.5px; }
         .shc2-info-val { font-size:18px; font-weight:700; color:#1a5c38; margin:2px 0 1px; }
         .shc2-info-desc { font-size:11px; color:#6b7280; }
-        .shc2-btn-primary { width:100%; padding:16px; border-radius:14px; border:none; background:linear-gradient(135deg,#1a5c38,#2d8653); color:white; font-size:17px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; margin-top:16px; transition:all .2s; }
-        .shc2-btn-primary:active { transform:scale(0.97); }
-        .shc2-btn-primary:disabled { opacity:.6; cursor:not-allowed; }
-        .shc2-btn-reset { width:100%; padding:13px; border-radius:12px; border:1.5px solid #e5e7eb; background:white; color:#6b7280; font-size:14px; font-weight:700; font-family:inherit; cursor:pointer; margin-top:10px; transition:all .2s; }
-        .shc2-error { padding:14px; background:#fff1f2; border-radius:12px; color:#9f1239; font-size:14px; font-weight:600; margin-bottom:12px; text-align:center; border:1.5px solid #fecdd3; }
 
-        /* ── VIDEO CARD STYLES ──────────────────────────────────────── */
-        .shc2-video-card {
-          border-radius:18px;
-          overflow:hidden;
-          margin-bottom:14px;
-          border:1.5px solid #a7f3d0;
-          background:white;
+        /* ── SLIDE IN ANIMATION ── */
+        .shc2-anim-slide {
+          animation:shc2slideUp .4s ease both;
         }
-        .shc2-video-banner {
-          display:flex;
-          align-items:center;
-          gap:14px;
-          padding:14px 16px;
-          cursor:pointer;
-          background:linear-gradient(135deg,#064e3b,#065f46,#047857);
-          user-select:none;
-          transition:opacity .15s;
-        }
-        .shc2-video-banner:active { opacity:0.88; }
-
-        .shc2-video-play-wrap {
-          flex-shrink:0;
-        }
-        .shc2-video-play-ring {
-          width:46px;
-          height:46px;
-          border-radius:50%;
-          border:2.5px solid rgba(255,255,255,0.5);
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          background:rgba(255,255,255,0.12);
-          transition:all .25s;
-        }
-        .shc2-video-play-ring.open {
-          background:rgba(255,255,255,0.22);
-          border-color:rgba(255,255,255,0.8);
-        }
-        .shc2-video-play-icon {
-          font-size:18px;
-          color:white;
-          margin-left:2px;
-        }
-        .shc2-video-play-ring.open .shc2-video-play-icon {
-          margin-left:0;
+        @keyframes shc2slideUp {
+          from{ opacity:0; transform:translateY(18px); }
+          to{ opacity:1; transform:translateY(0); }
         }
 
-        .shc2-video-banner-text {
-          flex:1;
-          min-width:0;
+        /* ── FLOATING PARTICLES ── */
+        @keyframes shc2float {
+          0%,100%{ transform:translateY(0) rotate(0deg); }
+          33%{ transform:translateY(-18px) rotate(8deg); }
+          66%{ transform:translateY(-8px) rotate(-5deg); }
         }
-        .shc2-video-badge {
-          display:inline-block;
-          background:rgba(255,255,255,0.18);
-          color:rgba(255,255,255,0.9);
-          font-size:9px;
-          font-weight:800;
-          letter-spacing:1.2px;
-          padding:2px 8px;
-          border-radius:20px;
-          margin-bottom:5px;
-          border:1px solid rgba(255,255,255,0.25);
-        }
-        .shc2-video-title {
-          color:white;
-          font-size:15px;
-          font-weight:700;
-          line-height:1.2;
-          margin-bottom:3px;
-          white-space:nowrap;
-          overflow:hidden;
-          text-overflow:ellipsis;
-        }
-        .shc2-video-sub {
-          color:rgba(255,255,255,0.65);
-          font-size:11px;
-        }
-
-        .shc2-video-chev {
-          color:rgba(255,255,255,0.7);
-          font-size:26px;
-          font-weight:300;
-          flex-shrink:0;
-          transition:transform .3s ease;
-          line-height:1;
-        }
-        .shc2-video-chev.open {
-          transform:rotate(90deg);
-        }
-
-        .shc2-video-body {
-          max-height:0;
-          overflow:hidden;
-          transition:max-height .45s cubic-bezier(.4,0,.2,1);
-        }
-        .shc2-video-body.open {
-          max-height:520px;
-        }
-
-        .shc2-video-player-wrap {
-          background:#000;
-          line-height:0;
-        }
-        .shc2-video-player {
-          width:100%;
-          max-height:280px;
-          object-fit:contain;
-          display:block;
-          background:#000;
-        }
-
-        .shc2-video-footer {
-          display:flex;
-          align-items:center;
-          gap:8px;
-          padding:10px 14px;
-          background:#ecfdf5;
-          border-top:1px solid #d1fae5;
-        }
-        .shc2-video-footer-dot {
-          width:7px;
-          height:7px;
-          border-radius:50%;
-          background:#10b981;
-          flex-shrink:0;
-          animation:shc2pulse 1.8s infinite;
-        }
-        @keyframes shc2pulse {
-          0%,100%{ opacity:1; transform:scale(1); }
-          50%{ opacity:0.5; transform:scale(0.8); }
-        }
-        .shc2-video-footer-txt {
-          flex:1;
-          font-size:12px;
-          color:#065f46;
-          font-weight:600;
-        }
-        .shc2-video-close-btn {
-          border:none;
-          background:#d1fae5;
-          color:#065f46;
-          font-size:11px;
-          font-weight:700;
-          padding:5px 10px;
-          border-radius:20px;
-          cursor:pointer;
-          font-family:inherit;
-          flex-shrink:0;
-          transition:background .2s;
-        }
-        .shc2-video-close-btn:active { background:#a7f3d0; }
       `}</style>
 
       <div className="shc2">
+        <Particles />
+
         {/* TOP BAR */}
         <div className="shc2-bar">
           <div className="shc2-logo">
             <div className="shc2-logo-icon">🌱</div>
             <div>
-              <div className="shc2-logo-text">{t.appName}</div>
-              <div className="shc2-logo-sub">{t.appSub}</div>
+              <div className="shc2-logo-text">{t("soil_app_name")}</div>
+              <div className="shc2-logo-sub">{t("soil_app_sub")}</div>
             </div>
           </div>
-          
         </div>
 
         <div className="shc2-body">
-
           {/* STEP PILLS */}
           <div className="shc2-steps">
             <div className={`shc2-sp${step>1?" done":step===1?" active":""}`}>
@@ -539,13 +740,13 @@ const { lang } = useLanguage();
             </div>
           </div>
 
-          {/* ── VIDEO GUIDE — shown above step 1 ── */}
-          <VideoGuideCard lang={lang} t={t} />
+          {/* VIDEO GUIDE */}
+          <VideoGuideCard />
 
-          {/* ── STEP 1: CROP ── */}
+          {/* STEP 1: CROP */}
           <div className="shc2-card">
-            <div className="shc2-card-title">1️⃣ {t.step1}</div>
-            <div className="shc2-card-sub">{t.step1sub}</div>
+            <div className="shc2-card-title">1️⃣ {t("soil_step1")}</div>
+            <div className="shc2-card-sub">{t("soil_step1_sub")}</div>
             <div className="shc2-crop-grid">
               {CROPS.map(c => (
                 <button key={c.name}
@@ -560,11 +761,11 @@ const { lang } = useLanguage();
             </div>
           </div>
 
-          {/* ── STEP 2: SOIL VALUES ── */}
-          {step >= 2 && crop && (
-            <div className="shc2-card">
-              <div className="shc2-card-title">2️⃣ {t.step2}</div>
-              <div className="shc2-card-sub">{t.step2sub}</div>
+          {/* STEP 2: SOIL VALUES */}
+          {step >= 2 && crop && !loading && !result && (
+            <div className="shc2-card shc2-anim-slide">
+              <div className="shc2-card-title">2️⃣ {t("soil_step2")}</div>
+              <div className="shc2-card-sub">{t("soil_step2_sub")}</div>
 
               {FIELDS.map(f => {
                 const lf = f[lang] || f.en;
@@ -608,139 +809,27 @@ const { lang } = useLanguage();
               {error && <div className="shc2-error">{error}</div>}
 
               <button className="shc2-btn-primary" onClick={handleAnalyze} disabled={loading}>
-                {loading ? `⏳ ${t.loading}` : `🔬 ${t.analyze}`}
+                🔬 {t("soil_analyze")}
               </button>
             </div>
           )}
 
-          {/* ── STEP 3: RESULTS ── */}
-          {step >= 3 && result && (
-            <>
-              <div className="shc2-voice-bar">
-                <button className={`shc2-vbtn ${speaking ? "stop" : "play"}`}
-                  onClick={handleVoice}
-                  title={speaking ? t.stop : t.listen}>
-                  {speaking ? "🛑" : "🔊"}
-                </button>
-                <div className="shc2-vtext">
-                  <div className="shc2-vlabel">
-                    {speaking ? (
-                      lang==="ml"?"🔊 കേൾക്കുന്നു...":lang==="hi"?"🔊 बोल रहे हैं...":"🔊 Speaking now..."
-                    ) : t.listen}
-                  </div>
-                  <div className="shc2-vsub">
-                    {speaking
-                      ? (lang==="ml"?"🛑 ചുവന്ന ബട്ടൺ അമർത്തിയാൽ നിർത്തും":lang==="hi"?"🛑 लाल बटन दबाएँ — बंद होगा":"🛑 Tap red button to stop")
-                      : (lang==="ml"?"ഒരു ടാപ്പ് — AI ഫലം ഉറക്കെ കേൾക്കാം":lang==="hi"?"एक tap — AI परिणाम सुनें":"One tap — hear AI results aloud")}
-                  </div>
-                </div>
-                {speaking && (
-                  <div className="shc2-dots">
-                    <div className="shc2-dot"/><div className="shc2-dot"/><div className="shc2-dot"/>
-                  </div>
-                )}
-              </div>
+          {/* LOADING */}
+          {loading && (
+            <div className="shc2-card shc2-anim-slide">
+              <LoadingScreen lang={lang} />
+            </div>
+          )}
 
-              <div className="shc2-result-hero">
-                <div className="shc2-result-big-icon">{result.crop_icon}</div>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize:11,fontWeight:700,textTransform:"uppercase",color:"#9ca3af",letterSpacing:1,marginBottom:4 }}>
-                    {t.step3}
-                  </div>
-                  <div className="shc2-result-crop">{result.recommended_crop}</div>
-                  <div style={{ fontSize:13,color:"#6b7280",marginTop:2 }}>
-                    {t.confidence}: <b style={{color:"#1a5c38"}}>{result.confidence}%</b>
-                  </div>
-                  <div className="shc2-conf-bar-wrap">
-                    <div className="shc2-conf-bar" style={{ width:`${result.confidence}%` }}/>
-                  </div>
-                  {result.alternatives?.length > 0 && (
-                    <>
-                      <div style={{ fontSize:11,color:"#9ca3af",margin:"6px 0 4px" }}>{t.also}:</div>
-                      <div className="shc2-alt-chips">
-                        {result.alternatives.map(a => (
-                          <span key={a} className="shc2-chip">
-                            {CROPS.find(c=>c.name.toLowerCase()===a)?.icon||"🌱"} {a}
-                          </span>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="shc2-explain">
-                💡 <b>{t.why}</b><br/>{result.explanation}
-              </div>
-
-              <div className="shc2-fert">
-                <div className="shc2-fert-title">🌿 {t.fert}</div>
-                <div className="shc2-fert-body">{result.fertilizer_tip}</div>
-              </div>
-
-              <div className="shc2-card">
-                <div className="shc2-card-title">📊 {t.soilHealth}</div>
-                <div className="shc2-health-grid">
-                  {[
-                    { key:"overall",    icon:"🌍", label:t.overall },
-                    { key:"ph",         icon:"🧪", label:"pH" },
-                    { key:"nitrogen",   icon:"🌿", label:lang==="ml"?"നൈട്രജൻ":lang==="hi"?"नाइट्रोजन":"Nitrogen" },
-                    { key:"phosphorus", icon:"🌱", label:lang==="ml"?"ഫോസ്ഫറസ്":lang==="hi"?"फास्फोरस":"Phosphorus" },
-                    { key:"potassium",  icon:"💪", label:lang==="ml"?"പൊട്ടാഷ്":lang==="hi"?"पोटाश":"Potassium" },
-                  ].map(item => {
-                    const s = result.soil_health?.[item.key];
-                    const hs = healthStyle(s);
-                    return (
-                      <div key={item.key} className="shc2-hcell"
-                        style={{ background:hs.bg, color:hs.color }}>
-                        <div className="shc2-hcell-icon">{item.icon}</div>
-                        <div className="shc2-hcell-label" style={{color:hs.color}}>{item.label}</div>
-                        <div className="shc2-hcell-status">{s}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="shc2-card">
-                <div className="shc2-card-title">📋 {t.infoTitle}</div>
-                <div className="shc2-info-grid">
-                  {FIELDS.map(f => {
-                    const lf = f[lang] || f.en;
-                    const v = values[f.key];
-                    const displayVal = f.step < 1 ? Number(v).toFixed(1) : Math.round(v);
-                    return (
-                      <div key={f.key} className="shc2-info-cell">
-                        <div className="shc2-info-key">{lf.label}</div>
-                        <div className="shc2-info-val">{displayVal}<span style={{fontSize:10,color:"#9ca3af",marginLeft:2}}>{lf.unit}</span></div>
-                        <div className="shc2-info-desc">{lf.hint}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="shc2-voice-bar" style={{marginBottom:0}}>
-                <button className={`shc2-vbtn ${speaking ? "stop" : "play"}`}
-                  onClick={handleVoice}>
-                  {speaking ? "🛑" : "🔊"}
-                </button>
-                <div className="shc2-vtext">
-                  <div className="shc2-vlabel">{speaking ? (lang==="ml"?"കേൾക്കുന്നു...":lang==="hi"?"बोल रहे हैं...":"Speaking...") : t.listen}</div>
-                  <div className="shc2-vsub">{speaking?(lang==="ml"?"നിർത്താൻ ടാപ്പ് ചെയ്യുക":lang==="hi"?"रोकने के लिए टैप करें":"Tap to stop"):(lang==="ml"?"ഒരിക്കൽ കൂടി കേൾക്കാൻ":lang==="hi"?"दोबारा सुनने के लिए":"Tap to hear again")}</div>
-                </div>
-              </div>
-
-              <button className="shc2-btn-reset"
-                onClick={() => {
-                  setStep(1); setCrop(null); setResult(null);
-                  setError(""); setSpeaking(false);
-                  window.speechSynthesis?.cancel();
-                  window.scrollTo({top:0, behavior:"smooth"});
-                }}>
-                🔄 {t.newTest}
-              </button>
-            </>
+          {/* STEP 3: RESULTS */}
+          {step >= 3 && result && !loading && (
+            <ResultCard
+              result={result}
+              values={values}
+              lang={lang}
+              t={t}
+              onReset={handleReset}
+            />
           )}
         </div>
       </div>
