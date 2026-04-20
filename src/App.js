@@ -1,5 +1,4 @@
 // src/App.jsx
-document.title = "Krishi Sakhi";
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home/Home";
@@ -21,19 +20,15 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import FloatingChatbot from "./components/FloatingChatbot/FloatingChatbot";
 import WeatherCornerWidget from "./components/WeatherCornerWidget/WeatherCornerWidget";
 
-// ── Inner component (needs Router context for useLocation) ───────────────────
 function AppInner({ showLogin, setShowLogin }) {
   const location = useLocation();
-  const { lang }  = useLanguage();
-
-  // Hide corner widget on dashboard (dashboard has its own weather panel)
+  const { lang } = useLanguage();
   const showWeather = !location.pathname.startsWith("/dashboard");
 
   return (
     <>
       <ScrollToTop />
       <Toolbar showLogin={showLogin} setShowLogin={setShowLogin} />
-
       <Routes>
         <Route path="/"            element={<Home showLogin={showLogin} setShowLogin={setShowLogin} />} />
         <Route path="/about"       element={<About />} />
@@ -46,22 +41,19 @@ function AppInner({ showLogin, setShowLogin }) {
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/help"        element={<Help />} />
       </Routes>
-
       <Footer />
       <FloatingChatbot />
-
-      {/* ── Corner weather widget — non-dashboard pages only ── */}
       {showWeather && <WeatherCornerWidget lang={lang || "en"} />}
     </>
   );
 }
 
-// ── Root App ─────────────────────────────────────────────────────────────────
 function App() {
-  const [showLogin,  setShowLogin]  = useState(false);
+  const [showLogin, setShowLogin]   = useState(false);
   const [splashDone, setSplashDone] = useState(false);
 
   useEffect(() => {
+    document.title = "Krishi Sakhi";
     localStorage.removeItem("farmerData");
     localStorage.removeItem("profileCompleted");
   }, []);
