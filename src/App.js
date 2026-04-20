@@ -1,5 +1,5 @@
 // src/App.jsx
-
+document.title = "Krishi Sakhi";
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home/Home";
