@@ -30,8 +30,15 @@ export default function SignUp({ onClose, onSignup }) {
       });
 
       if (error) { setError(error.message); return; }
-      setSuccess(true);
-      setTimeout(() => onClose(), 4000);
+      const user = {
+  name: name.trim(),
+  email: email.trim().toLowerCase(),
+  id: data.user.id
+};
+localStorage.setItem("loggedInUser", JSON.stringify(user));
+onSignup(user);
+onClose();
+
     } catch (err) {
       setError("Signup failed. Please try again.");
     } finally {
