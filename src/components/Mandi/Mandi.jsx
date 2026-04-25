@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API = "https://krishi-sakhi-backend-6.onrender.com";
-
+const API = "https://soil-prediction-api-1.onrender.com";
 const CROP_ICONS = {
   tomato: "🍅", tamatar: "🍅",
   wheat: "🌾", gehu: "🌾", gehun: "🌾",
