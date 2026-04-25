@@ -258,22 +258,26 @@ export default function Dashboard() {
     else { setIsLoggedIn(false); setLoading(false); }
   }, []);
 
-  const fetchProfiles = async () => {
-    setLoading(true);
-    try {
-const userStr = localStorage.getItem("loggedInUser");
-const email = userStr ? JSON.parse(userStr).email : null;
-const res = await axios.get(
-  `https://krishi-sakhi-backend-6.onrender.com/api/farmers?email=${encodeURIComponent(email)}`
-);
-      const sorted = (res.data || []).sort((a, b) => (b.id || 0) - (a.id || 0));
-      setProfiles(sorted);
-    } catch (err) {
-      console.error("Failed to fetch profiles:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // fetchProfiles mein:
+const fetchProfiles = async () => {
+  setLoading(true);
+  try {
+    const userStr = localStorage.getItem("loggedInUser");
+    const email = userStr ? JSON.parse(userStr).email : null;
+    
+    if (!email) { setLoading(false); return; }
+    
+    const res = await axios.get(
+      `https://krishi-sakhi-backend-6.onrender.com/api/farmers?email=${encodeURIComponent(email)}`
+    );
+    const sorted = (res.data || []).sort((a, b) => (b.id || 0) - (a.id || 0));
+    setProfiles(sorted);
+  } catch (err) {
+    console.error("Failed to fetch profiles:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (!isLoggedIn) {
     return (
