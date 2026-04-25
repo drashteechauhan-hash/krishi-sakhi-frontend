@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@400;500;600&display=swap');
+
 /* ── TOOLBAR BASE ── */
 .toolbar {
   display: flex;
@@ -17,11 +19,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .toolbar-logo {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(76, 175, 101, 0.3);
@@ -29,30 +32,34 @@
 
 .site-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #f0e8d5;
   letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
 /* ── NAV LINKS ── */
 .toolbar-center {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  flex: 1;
+  justify-content: center;
 }
 
 .toolbar-center a,
 .toolbar-center .disabled {
-  padding: 7px 14px;
+  padding: 6px 11px;
   border-radius: 8px;
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 500;
   color: rgba(240, 232, 213, 0.65);
   text-decoration: none;
   transition: all 0.18s;
   font-family: 'DM Sans', sans-serif;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .toolbar-center a:hover {
@@ -73,17 +80,17 @@
 
 /* ── AUTH BUTTONS ── */
 .auth-btn {
-  padding: 8px 20px;
+  padding: 7px 16px;
   border-radius: 10px;
   border: 1px solid rgba(196, 127, 26, 0.35);
   background: rgba(196, 127, 26, 0.08);
   color: #e8a832;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   font-family: 'DM Sans', sans-serif;
   transition: all 0.2s;
-  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
 .auth-btn:hover {
@@ -102,7 +109,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 16px;
   animation: overlayIn 0.25s ease;
 }
 
@@ -117,20 +124,20 @@
   background: linear-gradient(145deg, #0c1a0e, #081309);
   border: 1px solid rgba(196, 127, 26, 0.25);
   border-radius: 20px;
-  padding: 36px 32px 32px;
+  padding: 32px 24px 28px;
   width: 100%;
   max-width: 440px;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(76, 175, 101, 0.08);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7);
   animation: modalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.modal-content.signup {
-  max-width: 500px;
-}
+.modal-content.signup { max-width: 500px; }
 
 @keyframes modalIn {
   from { transform: scale(0.88) translateY(20px); opacity: 0; }
-  to   { transform: scale(1) translateY(0);        opacity: 1; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
 }
 
 /* ── CLOSE BUTTON ── */
@@ -158,12 +165,46 @@
   transform: scale(1.1);
 }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
+/* ══════════════════════════════
+   MOBILE RESPONSIVE
+══════════════════════════════ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .toolbar { padding: 10px 20px; }
+  .toolbar-center a,
+  .toolbar-center .disabled { padding: 5px 9px; font-size: 12px; }
+}
+
+/* Hide nav on mobile */
+@media (max-width: 768px) {
+  .toolbar {
+    padding: 8px 14px;
+  }
   .toolbar-center {
     display: none;
   }
-  .toolbar {
-    padding: 10px 16px;
+  .site-name {
+    font-size: 1.1rem;
   }
+  .toolbar-logo {
+    width: 32px;
+    height: 32px;
+  }
+  .auth-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  .modal-content {
+    padding: 28px 18px 24px;
+    border-radius: 16px;
+    max-height: 85vh;
+  }
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+  .toolbar { padding: 8px 10px; }
+  .site-name { font-size: 1rem; }
+  .auth-btn { padding: 5px 10px; font-size: 10px; }
 }
