@@ -57,30 +57,23 @@ export default function SellForm() {
           const result = res.data;
           setAiResult(result);
 
-          // Auto-fill crop name if AI detected it
-          if (result.crop_type && result.crop_type !== "unknown") {
+          // Auto-fill crop name only if AI actually verified it as a crop
+          if (result.is_crop && result.crop_type && result.crop_type !== "unknown") {
             setForm((f) => ({
               ...f,
               cropName: f.cropName || result.crop_type,
             }));
           }
         } catch (err) {
-          // If AI endpoint not ready, show mock verified
-          setAiResult({
-            is_real_photo: true,
-            is_crop: true,
-            crop_type: "crop",
-            health_status: "healthy",
-            disease_detected: "none",
-            confidence: 85,
-            farmer_advice: "Photo looks good! Fill in the details below.",
-          });
+          // ✅ NO mock verified — never auto-approve on error
+          setAiError("Photo verify nahi ho saki. Dobara try karein.");
+          setAiResult(null);
         }
         setAiLoading(false);
       };
       b64Reader.readAsDataURL(file);
     } catch (err) {
-      setAiError("Could not analyze photo. You can still proceed.");
+      setAiError("Could not analyze photo. Please retake.");
       setAiLoading(false);
     }
   };
@@ -112,9 +105,18 @@ export default function SellForm() {
   // ── Submit listing ──
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!photo) { alert("Please upload a photo of your crop"); return; }
-    if (aiResult && !aiResult.is_real_photo) {
-      alert("Please upload a real photo of your crop"); return;
+
+    if (!photo) {
+      alert("Please upload a photo of your crop");
+      return;
+    }
+
+    // ✅ STRICT AI check — screenshot/non-crop images blocked
+    if (!aiResult || !aiResult.is_real_photo || !aiResult.is_crop) {
+      alert(
+        "Kripya apni fasal ki asli photo upload karein.\nScreenshot ya koi aur cheez allowed nahi hai."
+      );
+      return;
     }
 
     setSubmitting(true);
@@ -136,7 +138,10 @@ export default function SellForm() {
         aiVerified: aiResult?.is_real_photo && aiResult?.is_crop,
         aiCropType: aiResult?.crop_type || null,
         aiHealth: aiResult?.health_status || null,
-        aiDisease: aiResult?.disease_detected === "none" ? null : aiResult?.disease_detected,
+        aiDisease:
+          aiResult?.disease_detected === "none"
+            ? null
+            : aiResult?.disease_detected,
         aiAdvice: aiResult?.farmer_advice || null,
         status: "active",
       };
@@ -152,11 +157,15 @@ export default function SellForm() {
     }
   };
 
-  // AI result UI
-  const aiOk = aiResult?.is_real_photo && aiResult?.is_crop;
-  const aiWarn = aiResult?.is_real_photo && aiResult?.is_crop &&
+  // AI result UI flags
+  const aiOk =
+    aiResult?.is_real_photo && aiResult?.is_crop;
+  const aiWarn =
+    aiResult?.is_real_photo &&
+    aiResult?.is_crop &&
     aiResult?.health_status === "diseased";
-  const aiFail = aiResult && (!aiResult.is_real_photo || !aiResult.is_crop);
+  const aiFail =
+    aiResult && (!aiResult.is_real_photo || !aiResult.is_crop);
 
   if (done) {
     return (
@@ -166,7 +175,9 @@ export default function SellForm() {
           <div className="sf-success">
             <div className="sf-success-ic">✓</div>
             <h2 className="sf-success-t">Listing Published!</h2>
-            <p className="sf-success-s">Buyers in your area can now see your crop.</p>
+            <p className="sf-success-s">
+              Buyers in your area can now see your crop.
+            </p>
           </div>
         </div>
       </>
@@ -181,10 +192,16 @@ export default function SellForm() {
 
           {/* Header */}
           <div className="sf-header">
-            <button className="sf-back" onClick={() => navigate("/mandi")}>← Back</button>
+            <button className="sf-back" onClick={() => navigate("/mandi")}>
+              ← Back
+            </button>
             <div className="sf-eyebrow">SELL YOUR CROP</div>
-            <h1 className="sf-title">List your <em>produce</em></h1>
-            <p className="sf-sub">AI verifies your photo, then buyers can contact you directly.</p>
+            <h1 className="sf-title">
+              List your <em>produce</em>
+            </h1>
+            <p className="sf-sub">
+              AI verifies your photo, then buyers can contact you directly.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -203,11 +220,19 @@ export default function SellForm() {
                 {!photoPreview ? (
                   <div className="sf-upload-placeholder">
                     <div className="sf-upload-icon">📷</div>
-                    <div className="sf-upload-text">Click to take or upload photo</div>
-                    <div className="sf-upload-sub">AI will verify your crop instantly</div>
+                    <div className="sf-upload-text">
+                      Click to take or upload photo
+                    </div>
+                    <div className="sf-upload-sub">
+                      AI will verify your crop instantly
+                    </div>
                   </div>
                 ) : (
-                  <img src={photoPreview} alt="crop preview" className="sf-preview-img" />
+                  <img
+                    src={photoPreview}
+                    alt="crop preview"
+                    className="sf-preview-img"
+                  />
                 )}
                 <input
                   ref={fileRef}
@@ -229,36 +254,60 @@ export default function SellForm() {
 
               {/* AI Result */}
               {aiResult && !aiLoading && (
-                <div className={`sf-ai-result ${aiFail ? "fail" : aiWarn ? "warn" : "ok"}`}>
+                <div
+                  className={`sf-ai-result ${
+                    aiFail ? "fail" : aiWarn ? "warn" : "ok"
+                  }`}
+                >
                   <div className="sf-ai-result-title">
-                    {aiFail ? "✗ Photo issue detected" :
-                     aiWarn ? "⚠ Disease detected" :
-                     "✓ Photo verified by AI"}
+                    {aiFail
+                      ? "✗ Photo issue detected"
+                      : aiWarn
+                      ? "⚠ Disease detected"
+                      : "✓ Photo verified by AI"}
                   </div>
                   <div className="sf-ai-pills">
-                    <span className={`sf-ai-pill ${aiResult.is_real_photo ? "g" : "r"}`}>
+                    <span
+                      className={`sf-ai-pill ${
+                        aiResult.is_real_photo ? "g" : "r"
+                      }`}
+                    >
                       {aiResult.is_real_photo ? "Real photo ✓" : "Not real ✗"}
                     </span>
-                    <span className={`sf-ai-pill ${aiResult.is_crop ? "g" : "r"}`}>
+                    <span
+                      className={`sf-ai-pill ${aiResult.is_crop ? "g" : "r"}`}
+                    >
                       {aiResult.is_crop
                         ? `${aiResult.crop_type || "Crop"} detected ✓`
                         : "No crop found ✗"}
                     </span>
-                    <span className={`sf-ai-pill ${aiResult.health_status === "healthy" ? "g" : "a"}`}>
-                      {aiResult.health_status === "healthy" ? "Healthy ✓" :
-                       aiResult.health_status === "diseased"
-                         ? `Disease: ${aiResult.disease_detected}`
-                         : "Status unknown"}
+                    <span
+                      className={`sf-ai-pill ${
+                        aiResult.health_status === "healthy" ? "g" : "a"
+                      }`}
+                    >
+                      {aiResult.health_status === "healthy"
+                        ? "Healthy ✓"
+                        : aiResult.health_status === "diseased"
+                        ? `Disease: ${aiResult.disease_detected}`
+                        : "Status unknown"}
                     </span>
                   </div>
                   {aiResult.farmer_advice && (
-                    <div className="sf-ai-advice">💡 {aiResult.farmer_advice}</div>
+                    <div className="sf-ai-advice">
+                      💡 {aiResult.farmer_advice}
+                    </div>
                   )}
                   {aiFail && (
                     <button
                       type="button"
                       className="sf-retry-btn"
-                      onClick={() => { setPhoto(null); setPhotoPreview(null); setAiResult(null); }}
+                      onClick={() => {
+                        setPhoto(null);
+                        setPhotoPreview(null);
+                        setAiResult(null);
+                        setAiError(null);
+                      }}
                     >
                       Retake photo →
                     </button>
@@ -266,11 +315,29 @@ export default function SellForm() {
                 </div>
               )}
 
-              {aiError && <div className="sf-ai-error">{aiError}</div>}
+              {/* AI Error — no mock, just show error + retry */}
+              {aiError && !aiResult && (
+                <div className="sf-ai-result fail">
+                  <div className="sf-ai-result-title">✗ Verification failed</div>
+                  <div className="sf-ai-advice">{aiError}</div>
+                  <button
+                    type="button"
+                    className="sf-retry-btn"
+                    onClick={() => {
+                      setPhoto(null);
+                      setPhotoPreview(null);
+                      setAiResult(null);
+                      setAiError(null);
+                    }}
+                  >
+                    Retake photo →
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* ── STEP 2: DETAILS ── (only if photo ok or warned) */}
-            {(aiOk || aiWarn || aiError) && (
+            {/* ── STEP 2: DETAILS ── only if photo verified (ok or warned) */}
+            {(aiOk || aiWarn) && (
               <div className="sf-step">
                 <div className="sf-step-label">
                   <span className="sf-step-num">2</span>
@@ -283,7 +350,9 @@ export default function SellForm() {
                     className="sf-input"
                     placeholder="e.g. Fresh Tomatoes, Basmati Wheat…"
                     value={form.cropName}
-                    onChange={e => setForm({ ...form, cropName: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, cropName: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -299,7 +368,9 @@ export default function SellForm() {
                         placeholder="0"
                         min="0"
                         value={form.price}
-                        onChange={e => setForm({ ...form, price: e.target.value })}
+                        onChange={(e) =>
+                          setForm({ ...form, price: e.target.value })
+                        }
                         required
                       />
                     </div>
@@ -309,9 +380,15 @@ export default function SellForm() {
                     <select
                       className="sf-input"
                       value={form.unit}
-                      onChange={e => setForm({ ...form, unit: e.target.value })}
+                      onChange={(e) =>
+                        setForm({ ...form, unit: e.target.value })
+                      }
                     >
-                      {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                      {UNITS.map((u) => (
+                        <option key={u} value={u}>
+                          {u}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="sf-field">
@@ -322,41 +399,53 @@ export default function SellForm() {
                       placeholder="e.g. 100"
                       min="0"
                       value={form.quantity}
-                      onChange={e => setForm({ ...form, quantity: e.target.value })}
+                      onChange={(e) =>
+                        setForm({ ...form, quantity: e.target.value })
+                      }
                     />
                   </div>
                 </div>
               </div>
             )}
 
-            {/* ── STEP 3: CONTACT ── */}
-            {(aiOk || aiWarn || aiError) && (
+            {/* ── STEP 3: CONTACT ── only if photo verified */}
+            {(aiOk || aiWarn) && (
               <div className="sf-step">
                 <div className="sf-step-label">
                   <span className="sf-step-num">3</span>
                   Your contact number
                 </div>
                 <div className="sf-field">
-                  <label className="sf-label">Phone number * (buyers will call/WhatsApp you)</label>
+                  <label className="sf-label">
+                    Phone number * (buyers will call/WhatsApp you)
+                  </label>
                   <input
                     className="sf-input"
                     type="tel"
                     placeholder="10-digit mobile number"
                     value={form.phone}
-                    onChange={e => setForm({ ...form, phone: e.target.value.replace(/\D/g, "").slice(0, 10) })}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        phone: e.target.value.replace(/\D/g, "").slice(0, 10),
+                      })
+                    }
                     maxLength={10}
                     required
                   />
                 </div>
 
                 <div className="sf-cod-note">
-                  💵 Payment is cash on delivery or direct — Krishi Sakhi does not handle money. We just connect you with buyers!
+                  💵 Payment is cash on delivery or direct — Krishi Sakhi does
+                  not handle money. We just connect you with buyers!
                 </div>
 
                 <button
                   className="sf-submit-btn"
                   type="submit"
-                  disabled={submitting || !form.cropName || !form.price || !form.phone}
+                  disabled={
+                    submitting || !form.cropName || !form.price || !form.phone
+                  }
                 >
                   {submitting ? "⏳ Publishing…" : "✓ Publish listing free →"}
                 </button>
@@ -422,7 +511,6 @@ const CSS = `
 .sf-ai-pill.a{background:rgba(232,168,50,0.15);color:var(--amber);}
 .sf-ai-pill.r{background:rgba(248,113,113,0.15);color:#f87171;}
 .sf-ai-advice{font-size:11px;color:var(--warm);margin-top:6px;line-height:1.5;}
-.sf-ai-error{font-size:11px;color:var(--amber);margin-top:8px;}
 .sf-retry-btn{margin-top:10px;padding:7px 16px;background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);color:#f87171;border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;}
 
 /* Fields */
