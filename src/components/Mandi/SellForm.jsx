@@ -51,7 +51,8 @@ export default function SellForm() {
       b64Reader.onload = async (ev) => {
         const base64 = ev.target.result.split(",")[1];
         try {
-          const res = await axios.post(`${API}/api/detect-crop`, {
+          const res = await axios.post(`${API}/detect-crop`, {
+
             image_base64: base64,
           });
           const result = res.data;
@@ -146,7 +147,8 @@ export default function SellForm() {
         status: "active",
       };
 
-      await axios.post(`${API}/api/mandi/listings`, payload);
+      await axios.post(`${API}/mandi/listings`, payload);
+
       setDone(true);
       setTimeout(() => navigate("/mandi"), 2000);
     } catch (err) {
