@@ -172,7 +172,14 @@ export default function Toolbar() {
           font-size: 9px; font-family: 'Space Mono', monospace; color: rgba(125,217,154,0.45);
           padding: 4px 10px 2px; border-bottom: 1px solid rgba(196,127,26,0.08);
           text-align: center; letter-spacing: 0.5px;
+
         }
+          /* ── MOBILE ── */
+@media(max-width:768px){
+  .lang-trigger-label{ display:none; }
+  .lang-trigger{ padding:6px 8px; }
+  .lang-dropdown{ right:-8px; min-width:190px; }
+}
       `}</style>
 
       <div className="toolbar">
@@ -216,7 +223,7 @@ export default function Toolbar() {
         </div>
 
         {/* ── RIGHT ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+<div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
 
           {/* ── LANGUAGE SWITCHER ── */}
           <div className="lang-switcher" ref={langRef}>
