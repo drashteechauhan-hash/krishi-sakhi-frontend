@@ -201,18 +201,24 @@ export default function Onboarding() {
     setGuideActive(false);
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
+      // ← YAHAN FIX KARO
+      const userStr = localStorage.getItem("loggedInUser");
+      const userEmail = userStr ? JSON.parse(userStr).email : null;
+
       const payload = {
-        name:          formData.name,
-        location:      formData.location,
-        landSize:      parseFloat(formData.landSize) || 0,
-        crop:          formData.crop,
-        soilType:      formData.soilType,
-        irrigationType:formData.irrigationType,
+        name:           formData.name,
+        location:       formData.location,
+        landSize:       parseFloat(formData.landSize) || 0,
+        crop:           formData.crop,
+        soilType:       formData.soilType,
+        irrigationType: formData.irrigationType,
+        email:          userEmail,  // ← CHANGED
       };
+
       await axios.post("https://krishi-sakhi-backend-6.onrender.com/api/farmers", payload);
       setSubmitted(true);
       setTimeout(() => navigate("/dashboard"), 1800);
@@ -223,7 +229,6 @@ export default function Onboarding() {
       setSubmitting(false);
     }
   };
-
   const getFieldLabel = (field) => field.labels[lang] || field.labels.en;
 
   // Languages to show in voice bar — only those with SpeechRecognition support

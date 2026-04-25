@@ -261,7 +261,11 @@ export default function Dashboard() {
   const fetchProfiles = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("https://krishi-sakhi-backend-6.onrender.com/api/farmers");
+const userStr = localStorage.getItem("loggedInUser");
+const email = userStr ? JSON.parse(userStr).email : null;
+const res = await axios.get(
+  `https://krishi-sakhi-backend-6.onrender.com/api/farmers?email=${encodeURIComponent(email)}`
+);
       const sorted = (res.data || []).sort((a, b) => (b.id || 0) - (a.id || 0));
       setProfiles(sorted);
     } catch (err) {

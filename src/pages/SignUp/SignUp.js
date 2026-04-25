@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { supabase } from "../../supabaseClient";
 import { useLanguage } from "../../context/LanguageContext";
 
 export default function SignUp({ onClose, onSignup }) {
@@ -15,23 +15,25 @@ export default function SignUp({ onClose, onSignup }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (name.trim().length < 2)   { setError("Please enter your full name."); return; }
-    if (password.length < 6)       { setError("Password must be at least 6 characters."); return; }
-    if (password !== confirm)      { setError("Passwords do not match."); return; }
+    if (name.trim().length < 2)  { setError("Please enter your full name."); return; }
+    if (password.length < 6)     { setError("Password must be at least 6 characters."); return; }
+    if (password !== confirm)    { setError("Passwords do not match."); return; }
+
     setLoading(true);
     try {
-      const res = await axios.post(
-        "https://krishi-sakhi-backend-6.onrender.com/api/auth/signup",
-        { name: name.trim(), email: email.trim().toLowerCase(), password }
-      );
-      const user = { name: res.data.name, email: res.data.email, id: res.data.id };
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
-      localStorage.removeItem("profileCompleted");
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password: password,
+        options: {
+          data: { name: name.trim() }
+        }
+      });
+
+      if (error) { setError(error.message); return; }
       setSuccess(true);
-      onSignup(user);
-      setTimeout(() => onClose(), 1400);
+      setTimeout(() => onClose(), 4000);
     } catch (err) {
-      setError(err.response?.data?.error || "Signup failed. Please try again.");
+      setError("Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -39,9 +41,12 @@ export default function SignUp({ onClose, onSignup }) {
 
   if (success) return (
     <div style={S.wrap}>
-      <div style={{fontSize:52,marginBottom:8}}>✅</div>
-      <h2 style={S.title}>{t("signup_success_title")}</h2>
-      <p style={S.sub}>Welcome, {name.split(" ")[0]}!</p>
+      <div style={{fontSize:52, marginBottom:8}}>📧</div>
+      <h2 style={S.title}>Check Your Email!</h2>
+      <p style={S.sub}>
+        Verification link bheja hai <b style={{color:"#4caf65"}}>{email}</b> par.<br/>
+        Link click karo phir login karo! ✅
+      </p>
     </div>
   );
 
@@ -54,28 +59,49 @@ export default function SignUp({ onClose, onSignup }) {
       <form onSubmit={handleSubmit} style={S.form}>
         <div style={S.field}>
           <label style={S.label}>{t("signup_name")}</label>
-          <input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Drashtee Chauhan" style={S.input} onFocus={e => e.target.style.borderColor="rgba(76,175,101,0.6)"} onBlur={e => e.target.style.borderColor="rgba(196,127,26,0.25)"} />
+          <input type="text" required value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="e.g. Drashtee Chauhan" style={S.input}
+            onFocus={e => e.target.style.borderColor="rgba(76,175,101,0.6)"}
+            onBlur={e => e.target.style.borderColor="rgba(196,127,26,0.25)"} />
         </div>
         <div style={S.field}>
           <label style={S.label}>{t("signup_email")}</label>
-          <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" style={S.input} onFocus={e => e.target.style.borderColor="rgba(76,175,101,0.6)"} onBlur={e => e.target.style.borderColor="rgba(196,127,26,0.25)"} />
+          <input type="email" required value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="your@email.com" style={S.input}
+            onFocus={e => e.target.style.borderColor="rgba(76,175,101,0.6)"}
+            onBlur={e => e.target.style.borderColor="rgba(196,127,26,0.25)"} />
         </div>
         <div style={S.twoCol}>
           <div style={S.field}>
             <label style={S.label}>{t("signup_password")}</label>
-            <input type="password" required value={password} onChange={e => setPassword(e.target.value)} placeholder="Min 6 characters" style={S.input} onFocus={e => e.target.style.borderColor="rgba(76,175,101,0.6)"} onBlur={e => e.target.style.borderColor="rgba(196,127,26,0.25)"} />
+            <input type="password" required value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Min 6 characters" style={S.input}
+              onFocus={e => e.target.style.borderColor="rgba(76,175,101,0.6)"}
+              onBlur={e => e.target.style.borderColor="rgba(196,127,26,0.25)"} />
           </div>
           <div style={S.field}>
             <label style={S.label}>{t("signup_confirm")}</label>
-            <input type="password" required value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Repeat password" style={S.input} onFocus={e => e.target.style.borderColor="rgba(76,175,101,0.6)"} onBlur={e => e.target.style.borderColor="rgba(196,127,26,0.25)"} />
+            <input type="password" required value={confirm}
+              onChange={e => setConfirm(e.target.value)}
+              placeholder="Repeat password" style={S.input}
+              onFocus={e => e.target.style.borderColor="rgba(76,175,101,0.6)"}
+              onBlur={e => e.target.style.borderColor="rgba(196,127,26,0.25)"} />
           </div>
         </div>
         {confirm.length > 0 && (
-          <div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color: password === confirm ? "#4caf65" : "#f87171"}}>
+          <div style={{fontSize:11, fontFamily:"'Space Mono',monospace",
+            color: password === confirm ? "#4caf65" : "#f87171"}}>
             {password === confirm ? "✓ Passwords match" : "✗ Passwords do not match"}
           </div>
         )}
-        <button type="submit" disabled={loading || (confirm.length > 0 && password !== confirm)} style={{...S.btn, opacity: loading || (confirm.length > 0 && password !== confirm) ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer"}}>
+        <button type="submit"
+          disabled={loading || (confirm.length > 0 && password !== confirm)}
+          style={{...S.btn,
+            opacity: loading || (confirm.length > 0 && password !== confirm) ? 0.6 : 1,
+            cursor: loading ? "not-allowed" : "pointer"}}>
           {loading ? t("signup_loading") : t("signup_btn")}
         </button>
       </form>
