@@ -92,18 +92,20 @@ export default function Toolbar() {
     : LANGS;
 
   const navLinks = [
-    { to: "/",            label: t("nav_home") },
-    { to: "/about",       label: t("nav_about") },
-    { to: "/schemes",     label: t("nav_schemes") },
-    { to: "/soil-health", label: t("nav_soil") },
-    ...(user ? [
-      { to: "/dashboard",  label: t("nav_dashboard") },
-      { to: "/onboarding", label: t("nav_profile") },
-    ] : []),
-    { to: "/activity",    label: t("nav_activity") },
-    { to: "/contact",     label: "Contact" },
-    { to: "/help",        label: "Help" },
-  ];
+  { to: "/",            label: t("nav_home") },
+  { to: "/about",       label: t("nav_about") },
+  { to: "/schemes",     label: t("nav_schemes") },
+  { to: "/soil-health", label: t("nav_soil") },
+  { to: "/mandi",       label: "🌾 Mandi" },        // ← ADD
+  ...(user ? [
+    { to: "/dashboard",  label: t("nav_dashboard") },
+    { to: "/onboarding", label: t("nav_profile") },
+  ] : []),
+  { to: "/activity",    label: t("nav_activity") },
+  { to: "/contact",     label: "Contact" },
+  { to: "/help",        label: "Help" },
+];
+
 
   return (
     <>
@@ -274,8 +276,9 @@ export default function Toolbar() {
           ) : (
             <span className="disabled">{t("nav_dashboard_locked")}</span>
           )}
-          {user && <Link className={getActive("/onboarding")} to="/onboarding">{t("nav_profile")}</Link>}
-          <Link className={getActive("/activity")} to="/activity">{t("nav_activity")}</Link>
+{user && <Link className={getActive("/onboarding")} to="/onboarding">{t("nav_profile")}</Link>}
+<Link className={getActive("/mandi")} to="/mandi">🌾 Mandi</Link>
+<Link className={getActive("/activity")} to="/activity">{t("nav_activity")}</Link>
         </div>
 
         {/* RIGHT */}
@@ -347,6 +350,7 @@ export default function Toolbar() {
                     <div style={{color:"rgba(240,232,213,0.38)", fontSize:11, marginTop:3, fontFamily:"'Space Mono',monospace"}}>{user.email}</div>
                   </div>
                   <Link to="/dashboard"  onClick={() => setUserMenuOpen(false)} style={MI}>📊 {t("nav_dashboard")}</Link>
+                  <Link to="/mandi"      onClick={() => setUserMenuOpen(false)} style={MI}>🌾 Mandi — Sell/Buy</Link>  {/* ← ADD */}
                   <Link to="/onboarding" onClick={() => setUserMenuOpen(false)} style={MI}>👤 {t("nav_profile")}</Link>
                   <Link to="/activity"   onClick={() => setUserMenuOpen(false)} style={MI}>📋 {t("nav_activity")}</Link>
                   <div style={{borderTop:"1px solid rgba(255,255,255,0.06)", marginTop:4}}>

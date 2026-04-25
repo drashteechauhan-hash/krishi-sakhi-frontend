@@ -15,6 +15,7 @@ function Navbar() {
         <Link to="/features">Features</Link>
         <Link to="/contact">Contact</Link>
         <Link to="/soil-health">🧪 Soil Health</Link>
+        <Link to="/mandi">Mandi 🌾</Link>
 
       </div>
 

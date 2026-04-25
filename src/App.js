@@ -19,6 +19,10 @@ import Footer from "./components/Footer/Footer";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import FloatingChatbot from "./components/FloatingChatbot/FloatingChatbot";
 import WeatherCornerWidget from "./components/WeatherCornerWidget/WeatherCornerWidget";
+import Mandi from "./components/Mandi/Mandi";
+import SellForm from "./components/Mandi/SellForm";
+
+
 
 function AppInner({ showLogin, setShowLogin }) {
   const location = useLocation();
@@ -40,6 +44,9 @@ function AppInner({ showLogin, setShowLogin }) {
         <Route path="/contact"     element={<Contact />} />
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/help"        element={<Help />} />
+        <Route path="/mandi" element={<Mandi />} />
+<Route path="/mandi/sell" element={<SellForm />} />
+
       </Routes>
       <Footer />
       <FloatingChatbot />
