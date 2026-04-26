@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const API = "https://soil-prediction-api-1.onrender.com";
+const JAVA_API = "https://krishi-sakhi-backend-6.onrender.com"; // yahan apna Java URL daal
+
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
@@ -147,7 +149,8 @@ export default function SellForm() {
         status: "active",
       };
 
-      await axios.post(`${API}/mandi/listings`, payload);
+      await axios.post(`${JAVA_API}/api/mandi/listings`, payload);
+
 
       setDone(true);
       setTimeout(() => navigate("/mandi"), 2000);
