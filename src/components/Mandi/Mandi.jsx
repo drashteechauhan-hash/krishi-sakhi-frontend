@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const API = "https://soil-prediction-api-1.onrender.com";
+const JAVA_API = "https://krishi-sakhi-backend-6.onrender.com";
+
 const CROP_ICONS = {
   tomato: "🍅", tamatar: "🍅",
   wheat: "🌾", gehu: "🌾", gehun: "🌾",
@@ -22,7 +24,7 @@ function getCropIcon(name = "") {
   return CROP_ICONS.default;
 }
 
-function ListingCard({ listing, onContact }) {
+function ListingCard({ listing }) {
   const [showPhone, setShowPhone] = useState(false);
   const [buyerPhone, setBuyerPhone] = useState("");
   const [revealing, setRevealing] = useState(false);
@@ -34,11 +36,7 @@ function ListingCard({ listing, onContact }) {
     }
     setRevealing(true);
     try {
-      await axios.post(`${API}/api/mandi/listings/${listing.id}/view`);
-      await axios.post(`${API}/api/mandi/enquiry`, {
-        listingId: listing.id,
-        buyerPhone,
-      }).catch(() => {}); // silent if endpoint not ready
+      await axios.post(`${JAVA_API}/api/mandi/listings/${listing.id}/view`);
       setShowPhone(true);
     } catch (e) {
       setShowPhone(true);
@@ -48,7 +46,6 @@ function ListingCard({ listing, onContact }) {
   };
 
   const icon = getCropIcon(listing.cropName);
-  const isHealthy = listing.aiHealth === "healthy";
   const hasDisease = listing.aiDisease && listing.aiDisease !== "none";
 
   return (
@@ -113,7 +110,7 @@ function ListingCard({ listing, onContact }) {
             <a href={`tel:${listing.phone}`} className="mc-phone-num">
               {listing.phone}
             </a>
-            <a
+            
               href={`https://wa.me/91${listing.phone}`}
               target="_blank"
               rel="noreferrer"
@@ -143,8 +140,8 @@ export default function Mandi() {
     setLoading(true);
     try {
       const url = crop
-        ? `${API}/api/mandi/listings?crop=${encodeURIComponent(crop)}`
-        : `${API}/api/mandi/listings`;
+        ? `${JAVA_API}/api/mandi/listings?crop=${encodeURIComponent(crop)}`
+        : `${JAVA_API}/api/mandi/listings`;
       const res = await axios.get(url);
       setListings(res.data || []);
     } catch (e) {
@@ -174,7 +171,6 @@ export default function Mandi() {
       <style>{CSS}</style>
       <div className="mc-wrap">
 
-        {/* ── HERO ── */}
         <div className="mc-hero">
           <div className="mc-hero-bg" />
           <div className="mc-hero-content">
@@ -206,7 +202,6 @@ export default function Mandi() {
             </div>
           </div>
 
-          {/* Trust bar */}
           <div className="mc-trust-bar">
             {["✓ AI Verified photos", "✓ Cash on delivery", "✓ Direct farmer contact", "✓ Free listings"].map(t => (
               <span key={t} className="mc-trust-item">{t}</span>
@@ -214,10 +209,7 @@ export default function Mandi() {
           </div>
         </div>
 
-        {/* ── BODY ── */}
         <div className="mc-body">
-
-          {/* Filter chips */}
           <div className="mc-filters">
             {filters.map(f => (
               <button
@@ -236,7 +228,6 @@ export default function Mandi() {
             </button>
           </div>
 
-          {/* Listings */}
           {loading ? (
             <div className="mc-loading">
               <div className="mc-spinner" />
@@ -265,7 +256,6 @@ export default function Mandi() {
               {filtered.map(l => (
                 <ListingCard key={l.id} listing={l} />
               ))}
-              {/* Sell CTA card */}
               {isLoggedIn && (
                 <div
                   className="mc-card mc-sell-card"
@@ -296,14 +286,8 @@ const CSS = `
   --border:rgba(196,127,26,0.18);--r:14px;--r-sm:9px;
 }
 .mc-wrap{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;color:var(--cream);}
-
-/* HERO */
 .mc-hero{position:relative;padding:80px 24px 0;overflow:hidden;}
-.mc-hero-bg{
-  position:absolute;inset:0;z-index:0;
-  background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(76,175,101,0.15) 0%,transparent 65%),
-  linear-gradient(160deg,#040c06,#081309);
-}
+.mc-hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(76,175,101,0.15) 0%,transparent 65%),linear-gradient(160deg,#040c06,#081309);}
 .mc-hero-content{position:relative;z-index:2;max-width:900px;margin:0 auto;text-align:center;padding-bottom:48px;}
 .mc-hero-tag{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--mint);margin-bottom:16px;}
 .mc-hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:700;line-height:1.05;color:var(--cream);margin-bottom:16px;}
@@ -317,26 +301,16 @@ const CSS = `
 .mc-search-btn:hover{background:var(--leaf);}
 .mc-sell-btn{padding:12px 24px;background:linear-gradient(135deg,var(--gold),var(--amber));color:#040c06;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.22s;box-shadow:0 4px 20px rgba(196,127,26,0.3);}
 .mc-sell-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(196,127,26,0.45);}
-
-/* TRUST BAR */
 .mc-trust-bar{display:flex;justify-content:center;flex-wrap:wrap;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02);margin-top:0;}
 .mc-trust-item{padding:10px 20px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--mint);border-right:1px solid var(--border);}
 .mc-trust-item:last-child{border-right:none;}
-
-/* BODY */
 .mc-body{max-width:1300px;margin:0 auto;padding:32px 24px 64px;}
-
-/* FILTERS */
 .mc-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
 .mc-filter-chip{padding:7px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.18s;}
 .mc-filter-chip.on{background:rgba(76,175,101,0.15);border-color:rgba(76,175,101,0.4);color:var(--mint);}
 .mc-filter-chip:hover:not(.on){color:var(--warm);border-color:rgba(240,232,213,0.2);}
 .mc-refresh{color:var(--amber);border-color:rgba(196,127,26,0.3);}
-
-/* GRID */
 .mc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
-
-/* CARD */
 .mc-card{background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:transform 0.22s,box-shadow 0.22s;animation:fadeUp 0.4s ease both;}
 .mc-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.4);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -366,15 +340,11 @@ const CSS = `
 .mc-phone-label{font-size:10px;color:var(--muted);}
 .mc-phone-num{font-size:14px;font-weight:700;color:var(--leaf);text-decoration:none;}
 .mc-wa-btn{padding:5px 10px;background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);color:#25d366;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;white-space:nowrap;}
-
-/* SELL CARD */
 .mc-sell-card{cursor:pointer;border:1.5px dashed rgba(76,175,101,0.35);background:rgba(26,64,37,0.1);}
 .mc-sell-card:hover{border-color:var(--leaf);background:rgba(26,64,37,0.2);}
 .mc-sell-card-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:48px 24px;text-align:center;}
 .mc-sell-card-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--leaf);}
 .mc-sell-card-sub{font-size:11px;color:var(--muted);}
-
-/* LOADING / EMPTY */
 .mc-loading{display:flex;flex-direction:column;align-items:center;gap:14px;padding:80px 0;color:var(--muted);font-family:'Space Mono',monospace;font-size:12px;}
 .mc-spinner{width:32px;height:32px;border:2px solid rgba(76,175,101,0.2);border-top-color:var(--leaf);border-radius:50%;animation:spin 0.8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
