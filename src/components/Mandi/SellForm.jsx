@@ -253,70 +253,77 @@ export default function SellForm() {
                   <span>AI analyzing your photo…</span>
                 </div>
               )}
+{aiResult && !aiLoading && (
+  <div className={`sf-ai-result ${aiFail ? "fail" : aiWarn ? "warn" : "ok"}`}>
+    <div className="sf-ai-result-title">
+      {aiFail ? "✗ Photo issue detected"
+        : aiWarn ? "⚠ Disease detected"
+        : "✓ Photo verified by AI"}
+    </div>
 
-              {/* AI Result */}
-              {aiResult && !aiLoading && (
-                <div
-                  className={`sf-ai-result ${
-                    aiFail ? "fail" : aiWarn ? "warn" : "ok"
-                  }`}
-                >
-                  <div className="sf-ai-result-title">
-                    {aiFail
-                      ? "✗ Photo issue detected"
-                      : aiWarn
-                      ? "⚠ Disease detected"
-                      : "✓ Photo verified by AI"}
-                  </div>
-                  <div className="sf-ai-pills">
-                    <span
-                      className={`sf-ai-pill ${
-                        aiResult.is_real_photo ? "g" : "r"
-                      }`}
-                    >
-                      {aiResult.is_real_photo ? "Real photo ✓" : "Not real ✗"}
-                    </span>
-                    <span
-                      className={`sf-ai-pill ${aiResult.is_crop ? "g" : "r"}`}
-                    >
-                      {aiResult.is_crop
-                        ? `${aiResult.crop_type || "Crop"} detected ✓`
-                        : "No crop found ✗"}
-                    </span>
-                    <span
-                      className={`sf-ai-pill ${
-                        aiResult.health_status === "healthy" ? "g" : "a"
-                      }`}
-                    >
-                      {aiResult.health_status === "healthy"
-                        ? "Healthy ✓"
-                        : aiResult.health_status === "diseased"
-                        ? `Disease: ${aiResult.disease_detected}`
-                        : "Status unknown"}
-                    </span>
-                  </div>
-                  {aiResult.farmer_advice && (
-                    <div className="sf-ai-advice">
-                      💡 {aiResult.farmer_advice}
-                    </div>
-                  )}
-                  {aiFail && (
-                    <button
-                      type="button"
-                      className="sf-retry-btn"
-                      onClick={() => {
-                        setPhoto(null);
-                        setPhotoPreview(null);
-                        setAiResult(null);
-                        setAiError(null);
-                      }}
-                    >
-                      Retake photo →
-                    </button>
-                  )}
-                </div>
-              )}
+    <div className="sf-ai-pills">
+      <span className={`sf-ai-pill ${aiResult.is_real_photo ? "g" : "r"}`}>
+        {aiResult.is_real_photo ? "Real photo ✓" : "Not real ✗"}
+      </span>
+      <span className={`sf-ai-pill ${aiResult.is_real_camera_photo ? "g" : "r"}`}>
+        {aiResult.is_real_camera_photo ? "Camera photo ✓" : "Downloaded image ✗"}
+      </span>
+      <span className={`sf-ai-pill ${aiResult.is_crop ? "g" : "r"}`}>
+        {aiResult.is_crop
+          ? `${aiResult.crop_type_hindi || aiResult.crop_type} detected ✓`
+          : "No crop found ✗"}
+      </span>
+      <span className={`sf-ai-pill ${aiResult.health_status === "healthy" ? "g" : "a"}`}>
+        {aiResult.health_status === "healthy" ? "Healthy ✓"
+          : aiResult.health_status === "diseased"
+          ? `Disease: ${aiResult.disease_detected} (${aiResult.disease_severity})`
+          : "Status unknown"}
+      </span>
+      {aiResult.quality_grade && aiResult.quality_grade !== "rejected" && (
+        <span className={`sf-ai-pill ${
+          aiResult.quality_grade === "A" ? "g"
+          : aiResult.quality_grade === "B" ? "g"
+          : "a"
+        }`}>
+          Grade {aiResult.quality_grade} ✓
+        </span>
+      )}
+    </div>
 
+    {/* Disease warning */}
+    {aiResult.disease_detected && aiResult.disease_detected !== "none" && (
+      <div className="sf-ai-disease-box">
+        ⚠️ <strong>{aiResult.disease_detected}</strong> detected
+        {aiResult.disease_severity && ` — ${aiResult.disease_severity} severity`}
+        {aiResult.defects_visible?.length > 0 && (
+          <div style={{marginTop: 4, fontSize: 10}}>
+            Issues: {aiResult.defects_visible.join(", ")}
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* Price estimate */}
+    {aiResult.estimated_price_range && aiResult.is_crop && (
+      <div className="sf-ai-price">
+        📊 Estimated market price: <strong>{aiResult.estimated_price_range}</strong>
+      </div>
+    )}
+
+    {aiResult.farmer_advice && (
+      <div className="sf-ai-advice">💡 {aiResult.farmer_advice}</div>
+    )}
+
+    {aiFail && (
+      <button type="button" className="sf-retry-btn" onClick={() => {
+        setPhoto(null); setPhotoPreview(null);
+        setAiResult(null); setAiError(null);
+      }}>
+        Retake photo →
+      </button>
+    )}
+  </div>
+)}
               {/* AI Error — no mock, just show error + retry */}
               {aiError && !aiResult && (
                 <div className="sf-ai-result fail">
