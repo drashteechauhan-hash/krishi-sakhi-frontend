@@ -99,7 +99,7 @@ function ListingCard({ listing }) {
                   maxLength={10}
                 />
                 <button className="mc-reveal-btn" onClick={handleReveal}>
-                  See Contact →
+                  See Contact
                 </button>
               </>
             )}
@@ -107,16 +107,16 @@ function ListingCard({ listing }) {
         ) : (
           <div className="mc-phone-shown">
             <span className="mc-phone-label">📞 Farmer</span>
-            <a href={`tel:${listing.phone}`} className="mc-phone-num">
+            <a href={"tel:" + listing.phone} className="mc-phone-num">
               {listing.phone}
             </a>
-            
-              href={`https://wa.me/91${listing.phone}`}
+            <a
+              href={"https://wa.me/91" + listing.phone}
               target="_blank"
               rel="noreferrer"
               className="mc-wa-btn"
             >
-              WhatsApp ↗
+              WhatsApp
             </a>
           </div>
         )}
@@ -167,16 +167,15 @@ export default function Mandi() {
   const isLoggedIn = !!localStorage.getItem("loggedInUser");
 
   return (
-    <>
+    <div>
       <style>{CSS}</style>
       <div className="mc-wrap">
-
         <div className="mc-hero">
           <div className="mc-hero-bg" />
           <div className="mc-hero-content">
             <div className="mc-hero-tag">🌾 KRISHI MANDI</div>
             <h1 className="mc-hero-title">
-              Farm Fresh,<br /><em>Direct to You</em>
+              Farm Fresh, <em>Direct to You</em>
             </h1>
             <p className="mc-hero-sub">
               Buy directly from verified farmers. No middlemen. Cash on delivery.
@@ -192,16 +191,12 @@ export default function Mandi() {
                 <button className="mc-search-btn" type="submit">Search</button>
               </form>
               {isLoggedIn && (
-                <button
-                  className="mc-sell-btn"
-                  onClick={() => navigate("/mandi/sell")}
-                >
+                <button className="mc-sell-btn" onClick={() => navigate("/mandi/sell")}>
                   + List your crop
                 </button>
               )}
             </div>
           </div>
-
           <div className="mc-trust-bar">
             {["✓ AI Verified photos", "✓ Cash on delivery", "✓ Direct farmer contact", "✓ Free listings"].map(t => (
               <span key={t} className="mc-trust-item">{t}</span>
@@ -214,7 +209,7 @@ export default function Mandi() {
             {filters.map(f => (
               <button
                 key={f}
-                className={`mc-filter-chip ${filter === f ? "on" : ""}`}
+                className={"mc-filter-chip" + (filter === f ? " on" : "")}
                 onClick={() => setFilter(f)}
               >
                 {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -238,11 +233,8 @@ export default function Mandi() {
               <div style={{ fontSize: "3rem" }}>🌱</div>
               <div>No listings yet.</div>
               {isLoggedIn && (
-                <button
-                  className="mc-sell-btn"
-                  onClick={() => navigate("/mandi/sell")}
-                >
-                  Be the first to sell →
+                <button className="mc-sell-btn" onClick={() => navigate("/mandi/sell")}>
+                  Be the first to sell
                 </button>
               )}
               {!isLoggedIn && (
@@ -257,10 +249,7 @@ export default function Mandi() {
                 <ListingCard key={l.id} listing={l} />
               ))}
               {isLoggedIn && (
-                <div
-                  className="mc-card mc-sell-card"
-                  onClick={() => navigate("/mandi/sell")}
-                >
+                <div className="mc-card mc-sell-card" onClick={() => navigate("/mandi/sell")}>
                   <div className="mc-sell-card-inner">
                     <div style={{ fontSize: "2.5rem" }}>➕</div>
                     <div className="mc-sell-card-title">List your crop free</div>
@@ -272,7 +261,7 @@ export default function Mandi() {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
